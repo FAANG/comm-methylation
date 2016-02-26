@@ -1,0 +1,16 @@
+#Wageningen methylation alignment/calling pipeline
+
+#produce reference index (RRBS)
+python bs_seeker2-build.py -f reference.fa --aligner=bowtie2 -r -l 20 -u 240 -d /path/to/reference/index/output/
+
+#produce reference index (WGBS)
+python bs_seeker2-build.py -f reference.fa --aligner=bowtie2 -d /path/to/reference/index/output/
+
+#align reads to reference (RRBS)
+python bs_seeker2-align.py -i Sample1_trimmed.fq.gz -g reference.fa -r -L 20 -U 240 -m 2 --aligner=bowtie2 --bt2-p 4 --bt2--local --bt2-N 1 --bt2-L 20 -d /path/to/reference/index/ -o Sample1.bam
+
+#align reads to reference (WGBS)
+python bs_seeker2-align.py -1 Sample1_trimmed_R1.fq.gz -2 Sample1_trimmed_R2.fq.gz -I MIN_INSERT_SIZE -X MAX_INSERT_SIZE -g reference.fa -m 2 --aligner=bowtie2 --bt2-p 4 --bt2--local --bt2-N 1 --bt2-L 20 -d /path/to/reference/index/ -o Sample1.bam
+
+#call methylation levels
+bs_seeker2-call_methylation.py -r 10 -i Sample1.bam -d /path/to/reference/index/ -o Sample1
