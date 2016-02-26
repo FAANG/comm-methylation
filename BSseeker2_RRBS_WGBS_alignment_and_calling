@@ -1,5 +1,11 @@
 #Wageningen methylation alignment/calling pipeline
 
+#trim raw reads (RRBS)
+trim_galore -q 20 --rrbs --length 20 -o /path/to/output Sample1.fastq.gz
+
+#trim raw reads (WGBS)
+trim_galore -q 20 --paired --retain_unpaired -o /path/to/output Sample1_R1.fastq.gz Sample1_R2.fastq.gz
+
 #produce reference index (RRBS)
 python bs_seeker2-build.py -f reference.fa --aligner=bowtie2 -r -l 20 -u 240 -d /path/to/reference/index/output/
 
