@@ -1,0 +1,27 @@
+INSTALL PROGRAM :
+- Trim_galore (0.4.0)
+- Bismark (v0.13.0)
+- Samtools
+- R
+
+
+INSTALL R Libraries :
+- methylKit :
+source("http://methylkit.googlecode.com/files/install.methylKit.R")
+install.methylKit(ver="0.9.2",dependencies=TRUE)
+- optparse
+install.packages("optparse")
+
+if you are in a distribuated system and you cannot install R package, fix the env variable $R_LIBS=~/Rlib and create it.
+eg :
+export R_LIBS="~/save/Rlib"
+mkdir ~/save/Rlib
+
+CONFIGURATION TO SET IN jflow/application.properties IN [softwares] SECTION
+#uncomment and set if not in the PATH
+#samtools = /usr/bin/samtools
+#trim_galore = /nosave/software/trim_galore
+#bismark = /nosave/software/bismark_v0.13.0/bismark
+#bismark_genome_preparation = /nosave/software/bismark_v0.13.0/bismark_genome_preparation
+#bowtie2 =  /usr/bin/bowtie2
+#bedtools = /nosave/software/bedtools2/bin/bedtools

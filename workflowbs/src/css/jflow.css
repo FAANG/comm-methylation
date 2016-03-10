@@ -1,0 +1,276 @@
+/***************************************************************
+*  Copyright notice
+*
+*  (c) 2015 PF bioinformatique de Toulouse
+*  All rights reserved
+* 
+*  It is distributed under the terms of the GNU General Public 
+*  License as published by the Free Software Foundation; either 
+*  version 2 of the License, or (at your option) any later version.
+*
+*  The GNU General Public License can be found at
+*  http://www.gnu.org/copyleft/gpl.html.
+*
+*  This script is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
+***************************************************************/
+
+.handsontable {
+	max-width: 695px;
+}
+.handsontable td.htInvalid {
+	background-image: linear-gradient(to bottom, #d9534f 0px, #c12e2a 100%) !important;
+	background-repeat: repeat-x;
+	border-color: #b92c28 !important;
+	color: white;
+}
+.handsontable .handsontableInput {
+	box-sizing: content-box;
+	border: 1px solid #66afe9;
+	outline: 0;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+}
+.handsontable .currentRow {
+background-color: #E7E8EF;
+}
+.handsontable .currentCol {
+background-color: #F9F9FB;
+}
+blockquote {
+	overflow: auto;	
+}
+
+.exclude-left {
+	height:34px;
+	border-right:5px solid lightgray;
+	padding-top:6px;
+	width:31px;
+	float:left;
+}
+.exclude-right {
+	height:34px;
+	padding:6px;
+	padding-left:32px;
+}
+
+.datepicker {
+	z-index: 1060 !important;	
+}
+
+.floatingBarsG {
+position:relative;
+width:16px;
+height:20px
+}
+
+.blockG {
+position:absolute;
+background-color:#FFFFFF;
+width:3px;
+height:6px;
+-moz-border-radius:3px 3px 0 0;
+-moz-transform:scale(0.4);
+-moz-animation-name:fadeG;
+-moz-animation-duration:1.04s;
+-moz-animation-iteration-count:infinite;
+-moz-animation-direction:linear;
+-webkit-border-radius:3px 3px 0 0;
+-webkit-transform:scale(0.4);
+-webkit-animation-name:fadeG;
+-webkit-animation-duration:1.04s;
+-webkit-animation-iteration-count:infinite;
+-webkit-animation-direction:linear;
+-ms-border-radius:3px 3px 0 0;
+-ms-transform:scale(0.4);
+-ms-animation-name:fadeG;
+-ms-animation-duration:1.04s;
+-ms-animation-iteration-count:infinite;
+-ms-animation-direction:linear;
+-o-border-radius:3px 3px 0 0;
+-o-transform:scale(0.4);
+-o-animation-name:fadeG;
+-o-animation-duration:1.04s;
+-o-animation-iteration-count:infinite;
+-o-animation-direction:linear;
+border-radius:3px 3px 0 0;
+transform:scale(0.4);
+animation-name:fadeG;
+animation-duration:1.04s;
+animation-iteration-count:infinite;
+animation-direction:linear;
+}
+
+#rotateG_01{
+left:0;
+top:7px;
+-moz-animation-delay:0.39s;
+-moz-transform:rotate(-90deg);
+-webkit-animation-delay:0.39s;
+-webkit-transform:rotate(-90deg);
+-ms-animation-delay:0.39s;
+-ms-transform:rotate(-90deg);
+-o-animation-delay:0.39s;
+-o-transform:rotate(-90deg);
+animation-delay:0.39s;
+transform:rotate(-90deg);
+}
+
+#rotateG_02{
+left:2px;
+top:3px;
+-moz-animation-delay:0.52s;
+-moz-transform:rotate(-45deg);
+-webkit-animation-delay:0.52s;
+-webkit-transform:rotate(-45deg);
+-ms-animation-delay:0.52s;
+-ms-transform:rotate(-45deg);
+-o-animation-delay:0.52s;
+-o-transform:rotate(-45deg);
+animation-delay:0.52s;
+transform:rotate(-45deg);
+}
+
+#rotateG_03{
+left:7px;
+top:1px;
+-moz-animation-delay:0.65s;
+-moz-transform:rotate(0deg);
+-webkit-animation-delay:0.65s;
+-webkit-transform:rotate(0deg);
+-ms-animation-delay:0.65s;
+-ms-transform:rotate(0deg);
+-o-animation-delay:0.65s;
+-o-transform:rotate(0deg);
+animation-delay:0.65s;
+transform:rotate(0deg);
+}
+
+#rotateG_04{
+right:2px;
+top:3px;
+-moz-animation-delay:0.78s;
+-moz-transform:rotate(45deg);
+-webkit-animation-delay:0.78s;
+-webkit-transform:rotate(45deg);
+-ms-animation-delay:0.78s;
+-ms-transform:rotate(45deg);
+-o-animation-delay:0.78s;
+-o-transform:rotate(45deg);
+animation-delay:0.78s;
+transform:rotate(45deg);
+}
+
+#rotateG_05{
+right:0;
+top:7px;
+-moz-animation-delay:0.9099999999999999s;
+-moz-transform:rotate(90deg);
+-webkit-animation-delay:0.9099999999999999s;
+-webkit-transform:rotate(90deg);
+-ms-animation-delay:0.9099999999999999s;
+-ms-transform:rotate(90deg);
+-o-animation-delay:0.9099999999999999s;
+-o-transform:rotate(90deg);
+animation-delay:0.9099999999999999s;
+transform:rotate(90deg);
+}
+
+#rotateG_06{
+right:2px;
+bottom:2px;
+-moz-animation-delay:1.04s;
+-moz-transform:rotate(135deg);
+-webkit-animation-delay:1.04s;
+-webkit-transform:rotate(135deg);
+-ms-animation-delay:1.04s;
+-ms-transform:rotate(135deg);
+-o-animation-delay:1.04s;
+-o-transform:rotate(135deg);
+animation-delay:1.04s;
+transform:rotate(135deg);
+}
+
+#rotateG_07{
+bottom:0;
+left:7px;
+-moz-animation-delay:1.1700000000000002s;
+-moz-transform:rotate(180deg);
+-webkit-animation-delay:1.1700000000000002s;
+-webkit-transform:rotate(180deg);
+-ms-animation-delay:1.1700000000000002s;
+-ms-transform:rotate(180deg);
+-o-animation-delay:1.1700000000000002s;
+-o-transform:rotate(180deg);
+animation-delay:1.1700000000000002s;
+transform:rotate(180deg);
+}
+
+#rotateG_08{
+left:2px;
+bottom:2px;
+-moz-animation-delay:1.3s;
+-moz-transform:rotate(-135deg);
+-webkit-animation-delay:1.3s;
+-webkit-transform:rotate(-135deg);
+-ms-animation-delay:1.3s;
+-ms-transform:rotate(-135deg);
+-o-animation-delay:1.3s;
+-o-transform:rotate(-135deg);
+animation-delay:1.3s;
+transform:rotate(-135deg);
+}
+
+.handsontable .htDimmed{
+color:#777;
+background-color:#F7F7F9;
+}
+
+@-moz-keyframes fadeG{
+0%{
+background-color:#000000}
+
+100%{
+background-color:#FFFFFF}
+
+}
+
+@-webkit-keyframes fadeG{
+0%{
+background-color:#000000}
+
+100%{
+background-color:#FFFFFF}
+
+}
+
+@-ms-keyframes fadeG{
+0%{
+background-color:#000000}
+
+100%{
+background-color:#FFFFFF}
+
+}
+
+@-o-keyframes fadeG{
+0%{
+background-color:#000000}
+
+100%{
+background-color:#FFFFFF}
+
+}
+
+@keyframes fadeG{
+0%{
+background-color:#000000}
+
+100%{
+background-color:#FFFFFF}
+
+}
