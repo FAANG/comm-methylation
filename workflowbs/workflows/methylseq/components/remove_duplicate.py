@@ -21,7 +21,7 @@ import os
 class RemoveDuplicate (Component):
 
     def define_parameters(self, bams, is_paired=True, cpu=1, mem="1G"):
-        self.add_input_file_list( "bam", "SORTED bam files.", default=bams, required=True )
+        self.add_input_file_list( "bam", "SORTED by coordinate bam files.", default=bams, required=True )
         names=[]
         self.temp_sorted1=[]
         self.temp_sorted2=[]
@@ -55,9 +55,9 @@ class RemoveDuplicate (Component):
             #remove singleton after rmdup
             
             self.add_shell_execution(self.get_exec_path("samtools") + " sort -n -m "+self.mem+" -@"+str(self.cpu)+" $1 | "+ \
-                                 self.get_exec_path("samtools") + " view -@"+str(self.cpu)+" -h - | "+\
+                                 self.get_exec_path("samtools") + " view -h -@"+str(self.cpu)+" -h - | "+\
                                  "awk '/^@/{print;next}$1==id{print l\"\\n\"$0;next}{id=$1;l=$0}' | "  + \
-                                 self.get_exec_path("samtools") + " view -@"+str(self.cpu)+" -bS - > $2 2>>$3", 
+                                 self.get_exec_path("samtools") + " sort -m "+self.mem+" -@"+str(self.cpu)+" - > $2 2>>$3", 
                                  cmd_format='{EXE} {IN} {OUT}',
                                  inputs=[self.temp_rmdup], outputs=[self.output_bam,self.rmsinglet_stderr], map=True)
         else :

@@ -23,7 +23,7 @@ from jflow.component import Component
 
 class TrimGalore (Component):
     
-    def define_parameters(self, input_files_R1, input_files_R2=None, non_directional=False, rrbs=False, quality=20, phred=33, adapter=None, stringency=1, error_rate=0.1, length=20):
+    def define_parameters(self, input_files_R1, input_files_R2=None, non_directional=False, rrbs=False, quality=20, phred64=False, adapter=None, stringency=1, error_rate=0.1, length=20):
         ends_with=""
         if input_files_R1[0].endswith('.gz') :
             ends_with='.gz'
@@ -41,8 +41,8 @@ class TrimGalore (Component):
             self.is_paired = False
         self.add_output_file_list( "stderrs", "stderr files", pattern='{basename_woext}.stderr', items=self.input_files_R1)
         self.add_output_file_list( "stdouts", "stdout files", pattern='{basename_woext}.stdout', items=self.input_files_R1)        
-        self.add_parameter("quality", "Instructs Cutadapt to use ASCII+33 ", default=quality,type='int')
-        self.add_parameter("phred", "Instructs Cutadapt to use ASCII+33 or ASCII+64", default=phred, type="int", choices=[33,64])
+        self.add_parameter("quality", "Quality threshold to trim low-quality ends from reads in addition to adapter removal ", default=quality,type='int')
+        self.add_parameter("phred64", "Instructs Cutadapt to use ASCII+64 instead of ASCII+33", default=phred64, type="bool")
         self.add_parameter("adapter", "Adapter sequence to be trimmed", default=adapter)
         self.add_parameter("stringency", "Overlap with adapter sequence required to trim a sequence.", default=stringency, type="int")
         self.add_parameter("error_rate", "Maximum allowed error rate ", default=error_rate, type="float")
@@ -64,9 +64,7 @@ class TrimGalore (Component):
             if self.is_paired :
                  self.options += " --trim1"
         
-        if self.phred == 33 : 
-            self.options += " --phred33"
-        else : 
+        if self.phred64 : 
             self.options += " --phred64"    
         
         #cutadapt path

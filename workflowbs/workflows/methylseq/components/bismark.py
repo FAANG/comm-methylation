@@ -88,7 +88,7 @@ class Bismark (Component):
             self.args += " --non_directional"
         if not(self.bowtie1): 
             if self.cpu :
-                # 2 bowtie process are launch in directional mode so divided allocated cpu for one alignment
+                # 2 bowtie process are launch in directional mode so divided allocated cpu for each bowtie
                 self.args += " --p "+ str(int(self.cpu/2))
             self.args += " --bowtie2"
             if not os.path.dirname(self.get_exec_path("bowtie2")) == "" :
@@ -109,7 +109,6 @@ class Bismark (Component):
                                 includes=self.reference_genome, map=True)
             
            
-            ###TODO ADD samtools sort!!!!
             self.add_shell_execution(self.get_exec_path("samtools") + " sort -m "+self.mem+" -@"+str(self.cpu)+" $1 -o $2 2>>$3 ", 
                                  cmd_format='{EXE} {IN} {OUT}',
                                  inputs=[self.output_files], outputs=[self.output_files_sort,self.sort_stderr], map=True)
