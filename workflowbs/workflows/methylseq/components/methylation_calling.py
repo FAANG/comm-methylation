@@ -50,7 +50,7 @@ class MethylationCalling (Component):
         context_files =[]
         context_index=3
         for c in self.context :
-            context_param=" --"+c+" $"+str(context_index)
+            context_param+=" --"+c+" $"+str(context_index)
             context_files.append(self.__getattribute__("methylkit_files_"+c))
             context_index +=1
             
