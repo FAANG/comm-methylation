@@ -12,16 +12,24 @@ install.methylKit(ver="0.9.2",dependencies=TRUE)
 - optparse
 install.packages("optparse")
 
-if you are in a distribuated system and you cannot install R package, fix the env variable $R_LIBS=~/Rlib and create it.
+if you are in a distribuated system and you can not install R package, fix the env variable $R_LIBS=~/Rlib and create directory.
 eg :
 export R_LIBS="~/save/Rlib"
 mkdir ~/save/Rlib
+And then run the scripts
+Rscript ./methylseq/bin/install_r_package_for_dss.R
+Rscript ./methylseq/bin/install_r_package_for_methylkit.R
+
+
 
 CONFIGURATION TO SET IN jflow/application.properties IN [softwares] SECTION
 #uncomment and set if not in the PATH
+#fastqc = 
 #samtools = /usr/bin/samtools
 #trim_galore = /nosave/software/trim_galore
 #bismark = /nosave/software/bismark_v0.13.0/bismark
 #bismark_genome_preparation = /nosave/software/bismark_v0.13.0/bismark_genome_preparation
 #bowtie2 =  /usr/bin/bowtie2
-#bedtools = /nosave/software/bedtools2/bin/bedtools
+#R > v3.2
+#Rscript=<path>/R-3.2.2/bin/Rscript
+

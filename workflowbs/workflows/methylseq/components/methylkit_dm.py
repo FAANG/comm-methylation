@@ -47,6 +47,9 @@ class MethylKitDM (Component):
         self.add_output_file("stderr", "The MethylKitDM stderr file", filename='methylkit_DM.stderr')
         self.add_output_file("stdout", "The MethylKitDM stdout file", filename='methylkit_DM.stdout')
         self.add_parameter("num_cpu", "Number of cpu to use", type="int", default=num_c)
+        if self.get_cpu() != None :
+            self.num_cpu=self.get_cpu()
+        
         self.options= ""
         self.includes= []
         if stranded :

@@ -227,10 +227,10 @@ class JFlowServer (object):
         select = False
         if 'filter_groups' in kwargs : filter_groups = kwargs['filter_groups'].split(',')
         if 'select' in kwargs : select = kwargs['select'] in ['True', 'true', '1', 1]
-        
+
         wf_instances, wf_methodes = self.wfmanager.get_available_workflows(filter_groups = filter_groups  , select = select)
         for instance in wf_instances:
-            parameters, parameters_per_groups, groups = [], {}, ["default"]
+            parameters, parameters_per_groups, ordered_groups = [], {}, ["default"]
             for param in instance.get_parameters():
                 # if it's a multiple action change the action by the name
                 if param.action == MiltipleAction:
@@ -289,13 +289,14 @@ class JFlowServer (object):
                 if param.group in parameters_per_groups:
                     parameters_per_groups[param.group].append(hash_param)
                 else: parameters_per_groups[param.group] = [hash_param]
-                groups.append(param.group)
+                if param.group not in ordered_groups:
+                    ordered_groups.append(param.group)
             workflows.append({"name": instance.name,
                               "help": instance.description,
                               "class": instance.__class__.__name__,
                               "parameters": parameters,
                               "parameters_per_groups": parameters_per_groups,
-                              "groups": list(set(groups))})
+                              "groups": ordered_groups})
         return workflows
 
     @cherrypy.expose

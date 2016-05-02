@@ -693,20 +693,20 @@ class Workflow(threading.Thread):
                         s.starttls()
                         s.login(me, fromp)
                     except smtplib.SMTPHeloError:
-                        self._log("The server didn't reply properly to the HELO greeting.", level="debug", traceback=traceback.format_exc(chain=False))
+                        self._log("The server didn't reply properly to the HELO greeting.", level="warning", traceback=traceback.format_exc(chain=False))
                     except smtplib.SMTPAuthenticationError:
-                        self._log("The server didn't accept the username/password combination.", level="debug", traceback=traceback.format_exc(chain=False))
+                        self._log("The server didn't accept the username/password combination.", level="warning", traceback=traceback.format_exc(chain=False))
                     except smtplib.SMTPException:
-                        self._log("No suitable authentication method was found, or the server does not support the STARTTLS extension.", level="debug", traceback=traceback.format_exc(chain=False))
+                        self._log("No suitable authentication method was found, or the server does not support the STARTTLS extension.", level="warning", traceback=traceback.format_exc(chain=False))
                     except RuntimeError:
-                        self._log("SSL/TLS support is not available to your Python interpreter.", level="debug", traceback=traceback.format_exc(chain=False))
+                        self._log("SSL/TLS support is not available to your Python interpreter.", level="warning", traceback=traceback.format_exc(chain=False))
                     except:
-                        self._log("Unhandled error when sending mail.", level="debug", traceback=traceback.format_exc(chain=False))
+                        self._log("Unhandled error when sending mail.", level="warning", traceback=traceback.format_exc(chain=False))
                     finally:
                         s.sendmail(me, [you], msg.as_string())
                         s.close()
                 except:
-                    self._log("Impossible to connect to smtp server '" + smtps + "'", level="debug", traceback=traceback.format_exc(chain=False))
+                    self._log("Impossible to connect to smtp server '" + smtps + "'", level="warning", traceback=traceback.format_exc(chain=False))
     
     def get_parameters_per_groups(self):
         name = self.get_name()
@@ -1045,14 +1045,15 @@ class Workflow(threading.Thread):
         
         if level == "exception":
             logging.getLogger("wf." + str(self.id)).exception(msg)
+            logh = open(self.stderr, "a")
+            today = ddate.today()
+            logh.write("## " + today.strftime("%c") + " :: " + msg + "\n")
+            if traceback: logh.write(traceback)
+            logh.close()
         elif level == "debug":
             logging.getLogger("wf." + str(self.id)).debug(msg)
-            
-        logh = open(self.stderr, "a")
-        today = ddate.today()
-        logh.write("## " + today.strftime("%c") + " :: " + msg + "\n")
-        if traceback: logh.write(traceback)
-        logh.close()
+        elif level == "warning":
+            logging.getLogger("wf." + str(self.id)).warning(msg)
         
         if raisee:
             raise Exception(msg)

@@ -103,7 +103,7 @@ class VCFReader(_AbstractFeatureReader):
                     info[tab[0]] = True
             variation.addattr( 'info', info)
         if len(row) > 8 :  
-            format = row[8].split(';')
+            format = row[8].split(':')
             variation.format = format
             for lib_infos in range (9,len(row)) :
                 if not regexp_none.match(row[lib_infos]):

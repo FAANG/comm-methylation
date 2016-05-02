@@ -25,21 +25,24 @@
   * Makeflow: a workflow engine for executing large complex workflows on 
   clusters, clouds, and grids. The supported version is v4.4.3. 
   http://ccl.cse.nd.edu/software/files/cctools-4.4.3-source.tar.gz
+  * FastQC >= v0.11.2
   * Trim_galore v0.4
   * Bismark 1.15
   * Bowtie 1 or Bowtie 2
-  * R 3.2.2 or higher (If you run Cm extraction and statistics analyze)
-	* R packages : please execute the R script which install all required packages
-	in faang-methylation/workflowbs/workflows/bin/install_r_package_for_methylkit.R
-
+  * R 3.2.2 or higher (If you run statistical tests)
 	* IMPORTANT for clusters: if packages are not available, the script automatically install it 
-	but note that if you are on a cluster the R_LIBS environment variable must
-	be set to an existing directory located in your home directory 
-	home directory.
+		but note that if you are on a cluster the R_LIBS environment variable must
+		be set to an existing directory located in your home directory 
+		home directory. (export R_LIBS="~/save/Rlib"; mkdir ~/save/Rlib)
 
 ## b - Download source	
 	git clone https://github.com/FAANG/faang-methylation.git
 	cd faang-methylation/workflowbs
+
+  * R packages : please execute the R script which install all required packages :
+	* Rscript faang-methylation/workflowbs/workflows/methylseq/bin/install_r_package_for_dss.R
+	* Rscript faang-methylation/workflowbs/workflows/methylseq/bin/install_r_package_for_methylkit.R
+
 Follow the instructions in the README.md file (this file ;) )
 
 # 3 - Configuration
@@ -54,79 +57,89 @@ For advanced configuration please refer to the online documentation [http://geno
 ## To display the global help :
 
     usage: jflow_cli.py methylseq [-h] --reference-genome REFERENCE_GENOME
-                                  [--control-genome CONTROL_GENOME]
-                                  [--snp-reference SNP_REFERENCE]
-                                  [--annotation ANNOTATION] [--tss TSS] --sample
-                                  INPUT_SAMPLE [INPUT_SAMPLE ...] [--is-single]
-                                  [--rrbs] [--non-directional] [--phred64]
-                                  [--quality QUALITY]
-                                  [--alignment-mismatch ALIGNMENT_MISMATCH]
-                                  [--max-insert-size MAX_INSERT_SIZE] [--bowtie1]
-                                  [--no-rmdup] [--coverage COVERAGE]
-                                  [--context {CpG,CHG,CHH}] [--no-overlap]
-                                  [--test TEST [TEST ...]]
-    
-    optional arguments:
-      -h, --help            show this help message and exit
-      --is-single           IF BAM PROVIDED : Set true if you provide alignment of
-                            single-end library
-    
-    Input files:
-      --reference-genome REFERENCE_GENOME
-                            Which genome should the read being align on
-      --control-genome CONTROL_GENOME
-                            Control reference sequence
-      --snp-reference SNP_REFERENCE
-                            VCF file of known SNP to remove from the analysis
-      --annotation ANNOTATION
-                            annotation file (gff ot gtf files), used in DMC
-                            categorization
-      --tss TSS             file with TSS positions (files format: chr tss
-                            strand), used to plot methylation level around TSS
-    
-    Sample description:
-      --sample INPUT_SAMPLE [INPUT_SAMPLE ...]
-                            Definition of a sample (methylkit=<INPUTFILE>,
-                            read1=<INPUTFILES>, read2=<INPUTFILES>,
-                            bam=<INPUTFILE>, sample-name=<STR>)
-    
-    Protocol parameters:
-      --rrbs                Workflow for RRBS data : clean data (MspI digested
-                            material) and do not perform rmdup
-      --non-directional     To set if the libraries are non directional (Default :
-                            False)
-      --phred64             quality scores phred64 scale used otherwise phred33 is
-                            the default
-    
-    Cleaning parameters:
-      --quality QUALITY     Quality threshold to trim low-quality ends from reads
-                            in addition to adapter removal
-    
-    Bismark alignment parameters:
-      --alignment-mismatch ALIGNMENT_MISMATCH
-                            Sets the number of mismatches to allowed in a seed
-                            alignment during multi-seed alignment
-      --max-insert-size MAX_INSERT_SIZE
-                            The maximum insert size for valid paired-end
-                            alignments.
-      --bowtie1             Use bowtie1 instead of bowtie2 (longer, better for
-                            reads < 50bp) - default False
-      --no-rmdup            Force to not perform rmdup
-    
-    Methylation extraction parameters:
-      --coverage COVERAGE   Minimum read coverage
-      --context {CpG,CHG,CHH}
-                            Type of methylation context to extract and analyze
-      --no-overlap          the overlapping paired reads will be ignored during
-                            extraction step
-    
-    DMC/DMR parameters:
-      --test TEST [TEST ...]
-                            Which test should be used for differential methylation
-                            analysis (normalization=<BOOL>, num-c=<INT>, num-
-                            dmc=<INT>, dmr=<BOOL>, pool1=<STR>, stranded=<BOOL>,
-                            alpha=<FLOAT>, filter=<BOOL>, pool2=<STR>,
-                            feature=<STR>, correct=<STR>, test-name=<STR>)
+                              [--control-genome CONTROL_GENOME]
+                              [--snp-reference SNP_REFERENCE]
+                              [--annotation ANNOTATION] [--tss TSS] --sample
+                              INPUT_SAMPLE [INPUT_SAMPLE ...] [--is-single]
+                              [--rrbs] [--non-directional] [--phred64]
+                              [--quality QUALITY]
+                              [--alignment-mismatch ALIGNMENT_MISMATCH]
+                              [--max-insert-size MAX_INSERT_SIZE] [--bowtie1]
+                              [--no-rmdup] [--coverage COVERAGE]
+                              [--context {CpG,CHG,CHH}] [--no-overlap]
+                              [--test-methylkit TEST_METHYLKIT [TEST_METHYLKIT ...]]
+                              [--test-dss TEST_DSS [TEST_DSS ...]]
+
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  --is-single           IF BAM PROVIDED : Set true if you provide alignment of
+							single-end library
+
+	Input files:
+	  --reference-genome REFERENCE_GENOME
+							Which genome should the read being align on
+	  --control-genome CONTROL_GENOME
+							Control reference sequence
+	  --snp-reference SNP_REFERENCE
+							VCF file of known SNP to remove from the analysis
+	  --annotation ANNOTATION
+							annotation file (gff ot gtf files), used in DMC
+							categorization
+	  --tss TSS             file with TSS positions (files format: chr tss
+							strand), used to plot methylation level around TSS
+
+	Sample description:
+	  --sample INPUT_SAMPLE [INPUT_SAMPLE ...]
+							Definition of a sample (bam=<INPUTFILE>, sample-
+							name=<STR>, read1=<INPUTFILES>, methylkit=<INPUTFILE>,
+							read2=<INPUTFILES>)
+
+	Protocol parameters:
+	  --rrbs                Workflow for RRBS data : clean data (MspI digested
+							material) and do not perform rmdup
+	  --non-directional     To set if the libraries are non directional (Default :
+							False)
+	  --phred64             Quality scores phred64 scale used otherwise phred33 is
+							the default
+
+	Cleaning parameters:
+	  --quality QUALITY     Quality threshold to trim low-quality ends from reads
+							in addition to adapter removal
+
+	Bismark alignment parameters:
+	  --alignment-mismatch ALIGNMENT_MISMATCH
+							Sets the number of mismatches to allowed in a seed
+							alignment during multi-seed alignment
+	  --max-insert-size MAX_INSERT_SIZE
+							The maximum insert size for valid paired-end
+							alignments.
+	  --bowtie1             Use bowtie1 instead of bowtie2 (longer, better for
+							reads < 50bp) - default False
+	  --no-rmdup            Force to not perform rmdup
+
+	Methylation extraction parameters:
+	  --coverage COVERAGE   Minimum read coverage
+	  --context {CpG,CHG,CHH}
+							Type of methylation context to extract and analyze
+	  --no-overlap          The overlapping paired reads will be ignored during
+							extraction step
+
+	DMC/DMR parameters with methylKit and eDMR:
+	  --test-methylkit TEST_METHYLKIT [TEST_METHYLKIT ...]
+							Which test should be used for differential methylation
+							analysis (num-dmc=<INT>, num-c=<INT>, feature=<STR>,
+							filter=<BOOL>, normalization=<BOOL>, pool2=<STR>,
+							stranded=<BOOL>, test-name=<STR>, pool1=<STR>,
+							dmr=<BOOL>, correct=<STR>, alpha=<FLOAT>)
+
+	DMC/DMR parameters with DSS:
+	  --test-dss TEST_DSS [TEST_DSS ...]
+							Which test should be used for differential methylation
+							analysis (feature=<STR>, high-cov=<INT>, prop-
+							dmc=<FLOAT>, low-cov=<INT>, num-c=<INT>,
+							normalization=<STR>, pool2=<STR>, test-name=<STR>,
+							pool1=<STR>, dmr=<BOOL>, correct=<STR>, alpha=<FLOAT>)
+
 
 
 
@@ -153,7 +166,7 @@ file. A configuration file example is given in workflows/methylseq/data/test_wgb
     --sample sample-name=sample7 read1=workflows/methylseq/data/sample7.R1.fastq.gz read2=workflows/methylseq/data/sample7.R2.fastq.gz \
     --sample sample-name=sample8 read1=workflows/methylseq/data/sample8.R1.fastq.gz read2=workflows/methylseq/data/sample8.R2.fastq.gz \
     --coverage 5  --context CpG \
-    --test test-name=sex pool1=sample1,sample4,sample5,sample8 pool2=sample2,sample3,sample6,sample7 normalization=1 filter=1 correct=BH alpha=0.05 
+    --test-methylkit test-name=sex pool1=sample1,sample4,sample5,sample8 pool2=sample2,sample3,sample6,sample7 normalization=1 filter=1 correct=BH alpha=0.05 
 
 # 6 - Errors
 

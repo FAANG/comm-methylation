@@ -46,6 +46,10 @@ class Bismark (Component):
         self.add_parameter("max_insert_size", "max_insert_size", default=max_insert_size, type="int")
         self.add_parameter("cpu", "cpu allocated for bismark (divided by 2 for bowtie option)", default=cpu, type="int")
         self.add_parameter("mem", "memory", default=mem, type="str")
+        if self.get_cpu() != None :
+            self.cpu=self.get_cpu()
+        if self.get_memory() != None :
+            self.mem=self.get_memory()
         
         self.source_file = self.reference_genome + "_source"
         extention_bowtie=""        

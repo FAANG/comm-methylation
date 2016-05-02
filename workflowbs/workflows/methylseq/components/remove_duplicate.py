@@ -42,7 +42,11 @@ class RemoveDuplicate (Component):
         
         self.add_output_file_list("rmdup_stderr", "The error trace file", pattern='{basename_woext}_rmdup.stderr', items=self.bam)
         self.add_output_file_list("rmsinglet_stderr","The error trace file", pattern='{basename_woext}_rmsinglet.stderr', items=self.bam)
-         
+        if self.get_cpu() != None :
+            self.cpu=self.get_cpu()
+        if self.get_memory() != None :
+            self.mem=self.get_memory()
+            
     def process(self):
         self.add_shell_execution(self.get_exec_path("samtools") + " flagstat $1 > $2", cmd_format='{EXE} {IN} {OUT}',
                                 inputs=[self.bam], outputs=[self.flagstat_init], map=True)

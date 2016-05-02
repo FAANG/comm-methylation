@@ -15,10 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os
-import logging
-
-from subprocess import Popen, PIPE
 from jflow.component import Component
 
 class TrimGalore (Component):
