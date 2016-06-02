@@ -1,0 +1,24 @@
+* 04/26/2016
+Debug when extract several context in methylation calling component
+
+* 04/20/2016 
+--> Equivalent to revision 29 of jflow-toolshed (http://mulcyber.toulouse.inra.fr/projects/jflow-toolshed/)* 
+	- add dmr detection
+	- add parameters : 
+		--annotation : annotation file (gff ot gtf files), used in DMC categorization
+		--tss : file with TSS positions (files format: chr    tss    strand), used to plot methylation level around TSS
+		--quality : Quality threshold to trim low-quality ends 
+		--phred64 : Quality scores phred64 scale used
+		--no-overlap : The overlapping paired reads will be ignored during extraction step
+		--test stranded : By default reads covering both strands of a CpG dinucleotide are merged, set stranded option to not merge
+		--dmr : Set this option to compute DMR
+		--num-c : cutoff of the number of CpGs (CHH or CHG) in each region to call DMR [default=3]
+		--num-dmc : cutoff of the number DMCs in each region to call DMR [default=1]
+		--feature : features to plot ',' (e.g.  exon, intron, 5_prime_utr...)
+	- improve r scripts to categorize DMC and generate graphics
+	- add script to use to install required R package before launching a pipeline
+	- remove calling to read.bismark of methylKit and use directly perl script methCall.pf of methylkit to avoid generation of sam files.
+	- remove snp in R script instead of using a python component
+
+	
+

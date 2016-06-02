@@ -196,7 +196,7 @@ class MethylSeq (Workflow):
                 if not os.path.exists(  os.path.join(os.path.dirname(indexed_control),"Bisulfite_Genome" )):
                     bismark_genome_preparation_control = self.add_component("BismarkGenomePreparation", [ self.control_genome, self.bowtie1], component_prefix="control")
                     indexed_control = bismark_genome_preparation_control.databank    
-                bismarkControl = self.add_component("Bismark", [indexed_control,trim_galore .output_files_R1, trim_galore.output_files_R2, reads_sample,self.non_directional,
+                bismarkControl = self.add_component("Bismark", [indexed_control,trim_galore.output_files_R1, trim_galore.output_files_R2, reads_sample,self.non_directional,
                                                                 self.bowtie1,self.alignment_mismatch, self.max_insert_size,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM],component_prefix=prefix+"_control")
             
         if self.start_with in ["fastq", "bam"] :
@@ -207,7 +207,6 @@ class MethylSeq (Workflow):
                 else :
                     dedup = self.add_component("RemoveDuplicate", [bams_files,self.is_paired,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM], component_prefix=prefix)            
                     bams_files=dedup.output_bam
-            
             
         methylkit_output={}
         if self.start_with == "methylkit" :
