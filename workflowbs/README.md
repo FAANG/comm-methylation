@@ -7,13 +7,14 @@
   To do so, this application
   - index the reference genome - Bismark (if not available)
   - clean data - trim_galore
+  - run fastqc before and after cleaning
   - align reads on a reference and/or a control genome - Bismark
   - remove duplicates if the data are not rrbs - samtools
-  - extract methylation - methylKit (soon available with bimsmark 
-    methylation extractor)
-  - remove SNP positions - home-made script (if VCF file is provided)
-  - research DMC - methylKit (soon available with DSS)
-
+  - extract methylation - methylKit (use perl script of methylkit)
+  - remove SNP positions - home-made script (during statistics preprocess)
+  - research DMC - methylKit or DSS
+  - research DMR - with eDMR for methylkit or DSS for DMC found with DSS
+  - Compute full of graphics to exploit results
   For the moment, the pipeline is only available from command line even
   if Jflow provides a web server mode.
 
@@ -25,12 +26,14 @@
   * Makeflow: a workflow engine for executing large complex workflows on 
   clusters, clouds, and grids. The supported version is v4.4.3. 
   http://ccl.cse.nd.edu/software/files/cctools-4.4.3-source.tar.gz
+  * FastQC
   * Trim_galore v0.4
   * Bismark 1.15
   * Bowtie 1 or Bowtie 2
   * R 3.2.2 or higher (If you run Cm extraction and statistics analyze)
-	R packages : please install the following packages
+	R packages : please install the following packages run the script to install it (see below b)
 	** methylKit
+	** DSS
 	** optparse (available from CRAN)
 	info: if packages are not available, the script automatically install it 
 	but note that if you are on a cluster the R_LIBS environment variable must
@@ -41,6 +44,8 @@
 	git clone https://github.com/FAANG/faang-methylation.git
 	cd faang-methylation/workflowbs
 	Follow the instructions in the README.md file (this file ;) )
+	
+	To install R package (with version of R > 3.2.2) you can run the scripts available at faang-methylation/workflowbs/workflows/methylseq/bin/install_*.R
 
 # 3 - Configuration
 

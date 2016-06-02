@@ -21,7 +21,7 @@ import os
 class RemoveDuplicate (Component):
 
     def define_parameters(self, bams, is_paired=True, cpu=1, mem="1G"):
-        self.add_input_file_list( "bam", "SORTED bam files.", default=bams, required=True )
+        self.add_input_file_list( "bam", "SORTED by coordinate bam files.", default=bams, required=True )
         names=[]
         self.temp_sorted1=[]
         self.temp_sorted2=[]
@@ -42,7 +42,11 @@ class RemoveDuplicate (Component):
         
         self.add_output_file_list("rmdup_stderr", "The error trace file", pattern='{basename_woext}_rmdup.stderr', items=self.bam)
         self.add_output_file_list("rmsinglet_stderr","The error trace file", pattern='{basename_woext}_rmsinglet.stderr', items=self.bam)
-         
+        if self.get_cpu() != None :
+            self.cpu=self.get_cpu()
+        if self.get_memory() != None :
+            self.mem=self.get_memory()
+            
     def process(self):
         self.add_shell_execution(self.get_exec_path("samtools") + " flagstat $1 > $2", cmd_format='{EXE} {IN} {OUT}',
                                 inputs=[self.bam], outputs=[self.flagstat_init], map=True)
@@ -54,10 +58,10 @@ class RemoveDuplicate (Component):
                     inputs=[self.temp_rmdup], outputs=[self.flagstat_rmdup], map=True)
             #remove singleton after rmdup
             
-            self.add_shell_execution(self.get_exec_path("samtools") + " sort -n -m "+self.mem+" -@"+str(self.cpu)+" $1 | "+ \
-                                 self.get_exec_path("samtools") + " view -@"+str(self.cpu)+" -h - | "+\
+            self.add_shell_execution(self.get_exec_path("samtools") + " sort -n -m "+self.mem+" -@"+str(self.cpu)+" -T $1.tmp $1 | "+ \
+                                 self.get_exec_path("samtools") + " view -h - | "+\
                                  "awk '/^@/{print;next}$1==id{print l\"\\n\"$0;next}{id=$1;l=$0}' | "  + \
-                                 self.get_exec_path("samtools") + " view -@"+str(self.cpu)+" -bS - > $2 2>>$3", 
+                                 self.get_exec_path("samtools") + " sort -m "+self.mem+" -@"+str(self.cpu)+" -T $1.tmp2 - > $2 2>>$3", 
                                  cmd_format='{EXE} {IN} {OUT}',
                                  inputs=[self.temp_rmdup], outputs=[self.output_bam,self.rmsinglet_stderr], map=True)
         else :

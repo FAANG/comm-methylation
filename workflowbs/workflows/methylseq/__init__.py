@@ -21,18 +21,13 @@ import shutil
 import glob
 import os
 
-def move_pattern_file(pattern, dest_dir):
-    files = glob.iglob(pattern)
-    for file in files:
-        if os.path.isfile(file):
-            shutil.move(file, dest_dir)
-            
+           
 class MethylSeq (Workflow):
     
     #===========================================================================
     # FOR cluster infrastructure
     NORMAL_MEM = "2G"
-    LARGE_MEM = "8G"
+    LARGE_MEM = "10G"
     HUGE_MEM = "20G"
      
     NORMAL_CPU = 2
@@ -59,6 +54,8 @@ class MethylSeq (Workflow):
         self.add_input_file("reference_genome", "Which genome should the read being align on", file_format="fasta", required=True, group="Input files")
         self.add_input_file("control_genome", "Control reference sequence", file_format="fasta", group="Input files")
         self.add_input_file("snp_reference", "VCF file of known SNP to remove from the analysis",  group="Input files")
+        self.add_input_file("annotation", "annotation file (gff ot gtf files), used in DMC categorization", group="Input files")
+        self.add_input_file("tss", "file with TSS positions (files format: chr    tss    strand), used to plot methylation level around TSS", group="Input files")
         
         self.add_multiple_parameter_list("input_sample", "Definition of a sample", flag="--sample", required = True, group="Sample description")
         self.add_parameter("sample_name", "Names of sample, will merge alignment of same sample", type="nospacestr", add_to = "input_sample", required = True)
@@ -68,29 +65,57 @@ class MethylSeq (Workflow):
         self.add_input_file("methylkit", "MethylKit extraction file, if set skip alignment and extraction", add_to = "input_sample")
         
         self.add_parameter("is_single", "IF BAM PROVIDED : Set true if you provide alignment of single-end library",  type="bool", default=False)
-        # Bisulfite parameters 
-        self.add_parameter("rrbs", "Workflow for RRBS data : clean data (digested with MspI) and do not perform rmdup", type="bool", default=False, group="Protocol parameters")
+
+        # Bisulfite parameters
+        self.add_parameter("rrbs", "Workflow for RRBS data : clean data (MspI digested material) and do not perform rmdup", type="bool", default=False, group="Protocol parameters")
         self.add_parameter("non_directional", "To set if the libraries are non directional (Default : False)", type="bool", default=False, group="Protocol parameters")
         
+
+        #cleaning options
+        self.add_parameter("quality", "Quality threshold to trim low-quality ends from reads in addition to adapter removal", type="int", default=20, group="Cleaning parameters")
+        self.add_parameter("phred64", "Quality scores phred64 scale used otherwise phred33 is the default  ", type=bool, default=False, flag="--phred64", group="Protocol parameters")
+
         # alignment parameter
         self.add_parameter("alignment_mismatch", "Sets the number of mismatches to allowed in a seed alignment during multi-seed alignment ", type="int", default=1, group="Bismark alignment parameters")
         self.add_parameter("max_insert_size", "The maximum insert size for valid paired-end alignments.", type="int", default=800, group="Bismark alignment parameters")
         self.add_parameter("bowtie1", "Use bowtie1 instead of bowtie2 (longer, better for reads < 50bp) - default False ", type=bool, default=False, flag="--bowtie1", group="Bismark alignment parameters")
         self.add_parameter("no_rmdup", "Force to not perform rmdup ", type=bool, default=False, flag="--no-rmdup", group="Bismark alignment parameters")
+        self.add_parameter("deduplicate_with", "Perform deduplication with dedulicate_bismark or samtools", choices=['bismark','samtools'], default="bismark", group="Bismark alignment parameters")
 
         #Methylation extraction
-        self.add_parameter("coverage", "Minimum read coverage",group="Methylation extraction parameters (methylkit)")     
-        self.add_parameter_list("context", "Type of methylation context to extract and analyze", choices=['CpG','CHG','CHH'], group="Methylation extraction parameters (methylkit)")
-        
+        self.add_parameter("coverage", "Minimum read coverage",group="Methylation extraction parameters")     
+        self.add_parameter_list("context", "Type of methylation context to extract and analyze", choices=['CpG','CHG','CHH'], group="Methylation extraction parameters")
+        self.add_parameter("no_overlap", "The overlapping paired reads will be ignored during extraction step  ", type=bool, default=False, flag="--no-overlap", group="Methylation extraction parameters")
         #MethylKit
-        self.add_multiple_parameter_list("test", "Which test should be used for differential methylation analysis", group="DMC parameters")
-        self.add_parameter("test_name", "Name for test", add_to = "test")
-        self.add_parameter("pool1", "List of sample-name for pool1", required=True, add_to = "test")         
-        self.add_parameter("pool2", "List of sample-name for pool2", required=True, add_to = "test")
-        self.add_parameter("normalization", "perform methylKit logical normalization", type="bool", default=False, add_to = "test")
-        self.add_parameter("filter", "filter position with coverage less than 5 and with coverage above 99% quantile", type="bool", default=False, add_to = "test")
-        self.add_parameter("correct", "method to adjust p-values for multiple testing ",  choices=['BH','bonferroni'], add_to = "test")
-        self.add_parameter("alpha", "significance level of the tests (i.e. acceptable rate of false-positive in the list of DMC)",  type="float", default=0.05, add_to = "test")
+        self.add_multiple_parameter_list("test_methylkit", "Which test should be used for differential methylation analysis", group="DMC/DMR parameters with methylKit and eDMR")
+        self.add_parameter("test_name", "Name for test", add_to = "test_methylkit")
+        self.add_parameter("pool1", "List of sample-name for pool1", required=True, add_to = "test_methylkit")         
+        self.add_parameter("pool2", "List of sample-name for pool2", required=True, add_to = "test_methylkit")
+        self.add_parameter("stranded", "By default reads covering both strands of a CpG dinucleotide are merged, set this flag to not merge", type="bool", default=False, add_to = "test_methylkit")
+        self.add_parameter("normalization", "perform methylKit logical normalization", type="bool", default=False, add_to = "test_methylkit")
+        self.add_parameter("filter", "filter position with coverage less than 5 and with coverage above 99% quantile", type="bool", default=False, add_to = "test_methylkit")
+        self.add_parameter("correct", "method to adjust p-values for multiple testing ",  choices=['BH','bonferroni'], add_to = "test_methylkit")
+        self.add_parameter("alpha", "significance level of the tests (i.e. acceptable rate of false-positive in the list of DMC)",  type="float", default=0.05, add_to = "test_methylkit")
+        self.add_parameter("dmr", "Set this option to compute DMR", type="bool", default=False, add_to = "test_methylkit")
+        self.add_parameter("num_c", "cutoff of the number of CpGs (CHH or CHG) in each region to call DMR [default=3]", type="int", default=3, add_to = "test_methylkit")
+        self.add_parameter("num_dmc", "cutoff of the number DMCs in each region to call DMR [default=1]", type="int", default=1, add_to = "test_methylkit")
+        self.add_parameter_list("feature", "features to plot ',' (e.g.  exon, intron, 5_prime_utr...)", add_to = "test_methylkit")
+        
+        
+        self.add_multiple_parameter_list("test_dss", "Which test should be used for differential methylation analysis", group="DMC/DMR parameters with DSS")
+        self.add_parameter("test_name", "Name for test", add_to = "test_dss")
+        self.add_parameter("pool1", "List of sample-name for pool1", required=True, add_to = "test_dss")         
+        self.add_parameter("pool2", "List of sample-name for pool2", required=True, add_to = "test_dss")
+        self.add_parameter("normalization", "Which normalization to use", default="libsize", choices=['libsize','median','UP','RLE','LR','none'], add_to = "test_dss")
+        self.add_parameter("high_cov", "Filter positions having higher coverage than this count", type="int", add_to = "test_dss")
+        self.add_parameter("low_cov", "Positions with at least one sample with a count less than low_cov are removed", type="int", default=0, add_to = "test_dss")        
+        self.add_parameter("correct", "method to adjust p-values for multiple testing ",  choices=['BH','bonferroni'], add_to = "test_dss")
+        self.add_parameter("alpha", "significance level of the tests (i.e. acceptable rate of false-positive in the list of DMC)",  type="float", default=0.05, add_to = "test_dss")
+        self.add_parameter("dmr", "Set this option to compute DMR", type="bool", default=False, add_to = "test_dss")
+        self.add_parameter("num_c", "cutoff of the number of CpGs (CHH or CHG) in each region to call DMR [default=3]", type="int", default=3, add_to = "test_dss")
+        self.add_parameter("prop_dmc", "cutoff of the proportion of DMCs in each region to call DMR [default=0.5]", type="float", default=0.5, add_to = "test_dss")
+        self.add_parameter_list("feature", "features to plot ',' (e.g.  exon, intron, 5_prime_utr...)", add_to = "test_dss")
+        
         #output
         #self.add_parameter("output_directory", "Output directory to move files after process", required=True, group = "output")
         #self.add_parameter("clean", "clean all intermediate files", type="bool", default=False, group = "output")
@@ -106,6 +131,11 @@ class MethylSeq (Workflow):
             if sample["bam"]  :
                self.start_with = "bam"
                self.is_paired = not(self.is_single) # parameter only use if bam are provided
+               if (self.is_single) :
+                    prefix = "single"
+               else :
+                    prefix = "paired"
+
             if sample["methylkit"] :
                 self.start_with = "methylkit"
             break
@@ -114,12 +144,7 @@ class MethylSeq (Workflow):
         bams_files=self.input_sample["bam"]
         methylkit_files=self.input_sample["methylkit"]
         
-        '''        
-        if os.path.exists(self.output_directory)  :
-            print ("Output directory already exists, please specify another directory\n")
-            exit(1)
-        '''    
-        
+     
         print ("Process will start from files : "+self.start_with+"\n")    
         self.id_reference = os.path.splitext(os.path.basename(self.reference_genome))[0]
 
@@ -148,10 +173,21 @@ class MethylSeq (Workflow):
                     print ("read2: ", reads2_fastq)
                     print ("Samples must be all paired or all single, please run 2 pipelines for each kind of data than process to statistics analyze from methylKit files with this pipeline\n")
                     exit(1)
+            #fastqc on raw data
+            if self.is_paired :
+                fastqc_raw = self.add_component("FastQC", [ self.input_sample["read1"]+reads2_fastq, False, MethylSeq.LARGE_CPU],component_prefix=prefix+"_raw")
+            else : 
+                fastqc_raw = self.add_component("FastQC", [ self.input_sample["read1"], False, MethylSeq.LARGE_CPU],component_prefix=prefix+"_raw")
             #cleaning raw files (quality and adapter trimming)
-            trim_galore = self.add_component("TrimGalore", [ self.input_sample["read1"], reads2_fastq, self.non_directional, self.rrbs],component_prefix=prefix)
+            trim_galore = self.add_component("TrimGalore", [ self.input_sample["read1"], reads2_fastq, self.non_directional, self.rrbs, self.quality, self.phred64],component_prefix=prefix)
+            
+            if self.is_paired :
+                fastqc_raw = self.add_component("FastQC", [ trim_galore.output_files_R1+trim_galore.output_files_R2, False, MethylSeq.LARGE_CPU],component_prefix=prefix+"_raw")
+            else : 
+                fastqc_raw = self.add_component("FastQC", [ trim_galore.output_files_R1, False, MethylSeq.LARGE_CPU],component_prefix=prefix+"_raw")      
+            
             bismarkReference = self.add_component("Bismark", [indexed_ref,trim_galore.output_files_R1, trim_galore.output_files_R2, reads_sample,self.non_directional,
-                                                              self.bowtie1,self.alignment_mismatch, self.max_insert_size,MethylSeq.HUGE_CPU,MethylSeq.NORMAL_MEM], component_prefix=prefix)
+                                                              self.bowtie1,self.alignment_mismatch, self.max_insert_size,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM], component_prefix=prefix)
             bams_files=bismarkReference.output_sample_bam
             #if a control genome is provided
             if self.control_genome:
@@ -160,14 +196,19 @@ class MethylSeq (Workflow):
                 if not os.path.exists(  os.path.join(os.path.dirname(indexed_control),"Bisulfite_Genome" )):
                     bismark_genome_preparation_control = self.add_component("BismarkGenomePreparation", [ self.control_genome, self.bowtie1], component_prefix="control")
                     indexed_control = bismark_genome_preparation_control.databank    
-                bismarkControl = self.add_component("Bismark", [indexed_control,trim_galore.output_files_R1, trim_galore.output_files_R2, reads_sample,self.non_directional,
-                                                                self.bowtie1,self.alignment_mismatch, self.max_insert_size,MethylSeq.HUGE_CPU,MethylSeq.NORMAL_MEM],component_prefix=prefix+"_control")
+                bismarkControl = self.add_component("Bismark", [indexed_control,trim_galore .output_files_R1, trim_galore.output_files_R2, reads_sample,self.non_directional,
+                                                                self.bowtie1,self.alignment_mismatch, self.max_insert_size,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM],component_prefix=prefix+"_control")
             
         if self.start_with in ["fastq", "bam"] :
             if not (self.rrbs) and not (self.no_rmdup):
-                rmdup = self.add_component("RemoveDuplicate", [bams_files,self.is_paired, MethylSeq.HUGE_CPU, MethylSeq.LARGE_MEM], component_prefix=prefix)            
-                bams_files=rmdup.output_bam
-
+                if self.deduplicate_with == "bismark" :
+                    dedup = self.add_component("DeduplicateBismark", [bams_files,self.is_paired,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM], component_prefix=prefix)            
+                    bams_files=dedup.output_bam
+                else :
+                    dedup = self.add_component("RemoveDuplicate", [bams_files,self.is_paired,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM], component_prefix=prefix)            
+                    bams_files=dedup.output_bam
+            
+            
         methylkit_output={}
         if self.start_with == "methylkit" :
             #if methylkit file provided
@@ -178,25 +219,16 @@ class MethylSeq (Workflow):
             for c in self.context :
                 methylkit_output[c]=self.input_sample["methylkit"]
         else:
-            #convert bam to sorted sam
-            sorted_sam_component = self.add_component("SamtoolsSortSam", [bams_files, MethylSeq.HUGE_CPU, MethylSeq.LARGE_MEM])
-                    
             # handle several context
-            for c in self.context :
-                if c != None or c!="None":
-                    #Launch extraction per context
-                    methylation_extractor_component = self.add_component("MethylKitExtractor", 
-                                                                         [sorted_sam_component.sam_files, self.coverage, self.id_reference, c], 
-                                                                         component_prefix=c)
-                    methylkit_output[c]=methylation_extractor_component.methylkit_files
+            methylation_extractor_component = self.add_component("MethylationCalling", 
+                                                                 [bams_files, self.coverage,  self.id_reference, self.context, self.is_paired, self.no_overlap, self.phred64])
         
-        if self.snp_reference != None :
-            # handle several context
-            for c in methylkit_output.keys() :
-                removesnp_component = self.add_component("RemoveSnpFromMethylkit", [methylkit_output[c], self.snp_reference],component_prefix=c)
-                # replace files for next step
-                methylkit_output[c]=removesnp_component.output
-        for to_test in self.test :
+            
+            for c in self.context :           
+                methylkit_output[c]=methylation_extractor_component.__getattribute__('methylkit_files_'+c)
+             
+        
+        for to_test in self.test_methylkit :
             #prepare test inputs
             for c in methylkit_output.keys() :
                 # associate list of files and pools for each test
@@ -212,51 +244,29 @@ class MethylSeq (Workflow):
                         pool2.append(os.path.basename(meth_file))
                 prefix_str=to_test["test_name"]+"_"+c+"_norm"+str(to_test["normalization"])+"_filter"+str(to_test["filter"])+"_"+to_test["correct"]+"_"+str(to_test["alpha"]).replace(".",",")
                 methdiff = self.add_component("MethylKitDM", [files, pool1, pool2, self.id_reference, c,
-                                                              to_test["normalization"],to_test["filter"],to_test["correct"],to_test["alpha"]], 
+                                                              to_test["normalization"],to_test["filter"],to_test["correct"],to_test["alpha"],
+                                                              to_test["stranded"],self.annotation,self.tss,self.snp_reference,
+                                                              to_test["dmr"],to_test["num_c"],to_test["num_dmc"],to_test["feature"],MethylSeq.LARGE_CPU], 
                                               component_prefix=prefix_str)
-    '''    
-    def post_process(self):
         
-        os.mkdir(self.output_directory)
-        out_log=os.path.join(self.output_directory,"log")
-        os.mkdir(out_log)
-        component_to_save = ["TrimGalore","Bismark", "MethylKitExtractor","MethylKitDM", "RemoveDuplicate","RemoveSnpFromMethylkit"]
-        for c_name in self.get_components_nameid() :
-            
-            (cpt_name,prefix)=c_name.split(".")
-            cpt_dir = self.get_component_output_directory(cpt_name,prefix)
-            shutil.move(os.path.join(cpt_dir,"trace.txt"),os.path.join(out_log,c_name+".log"))
-            if cpt_name in component_to_save :
-            
-                curr_out_dir=os.path.join(self.output_directory,cpt_name+"_"+prefix)
-                os.mkdir(curr_out_dir)
-                if c_name.startswith("TrimGalore"):
-                    #copy reports
-                    move_pattern_file(os.path.join(cpt_dir,"*_report.txt"),curr_out_dir)
-                
-                if c_name.startswith("Bismark"):
-                    #copy bam and report
-                    #move_pattern_file(os.path.join(cpt_dir,"*.bam"),curr_out_dir)
-                    move_pattern_file(os.path.join(cpt_dir,"*_report.txt"),curr_out_dir)
-                
-                if c_name.startswith("MethylKitExtractor"):
-                    #copy extract positions
-                    move_pattern_file(os.path.join(cpt_dir,"*.txt"),curr_out_dir)
-                
-                if c_name.startswith("RemoveSnpFromMethylkit"):
-                    #copy extract positions
-                    move_pattern_file(os.path.join(cpt_dir,"*.txt"),curr_out_dir)
-                
-                if c_name.startswith("MethylKitDM"):
-                    #copy extract positions
-                    move_pattern_file(os.path.join(cpt_dir,"*"),curr_out_dir)
-                
-                if c_name.startswith("RemoveDuplicate")  :
-                    #copy final bam
-                    move_pattern_file(os.path.join(cpt_dir,"*_clean.bam"),curr_out_dir)
-                    #copy flagstat
-                    move_pattern_file(os.path.join(cpt_dir,"*_flagstat"),curr_out_dir)
-
-            if self.clean :
-                shutil.rmtree(cpt_dir)
-    '''    
+        for to_test in self.test_dss :
+            #prepare test inputs
+            for c in methylkit_output.keys() :
+                # associate list of files and pools for each test
+                files=[]
+                pool1=[]
+                pool2=[]
+                for sample_name,meth_file in zip(self.input_sample["sample_name"], methylkit_output[c]):
+                    if sample_name in to_test["pool1"]:
+                        files.append(meth_file)
+                        pool1.append(os.path.basename(meth_file))
+                    if sample_name in to_test["pool2"]:
+                        files.append(meth_file)
+                        pool2.append(os.path.basename(meth_file))
+                prefix_str=to_test["test_name"]+"_"+c+"_norm"+str(to_test["normalization"])+"_filterHigh"+str(to_test["high_cov"])+"_filterLow"+str(to_test["low_cov"])+"_"+to_test["correct"]+"_"+str(to_test["alpha"]).replace(".",",")
+                methdiff = self.add_component("DssDM", [files, pool1, pool2, c,
+                                                              to_test["normalization"],to_test["high_cov"],to_test["low_cov"],
+                                                              to_test["correct"],to_test["alpha"], self.annotation,self.tss,self.snp_reference,
+                                                              to_test["dmr"],to_test["num_c"],to_test["prop_dmc"],to_test["feature"],MethylSeq.LARGE_CPU], 
+                                              component_prefix=prefix_str)
+   

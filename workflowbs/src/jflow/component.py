@@ -16,6 +16,7 @@
 #
 
 import os
+import re
 import sys
 import inspect
 import tempfile
@@ -49,6 +50,30 @@ class Component(object):
         if isinstance(self.version, bytes):
             self.version = self.version.decode()
         self.batch_options = self.config_reader.get_component_batch_options(self.__class__.__name__)
+        # in case of SGE, parse the cpu and memory parameter
+        self.__cpu=None
+        self.__memory=None
+        type, options, limit_submission = self.config_reader.get_batch()
+        if type.lower() == "sge" :
+            try:
+                self.__cpu = int(re.match( r'.*-pe\s+(\w+)\s+(\d+)\s?.*', self.batch_options).group(2))
+            except: pass
+            try:
+                self.__memory = re.match( r'.*-l\s+mem=(\d+\S+)\s?.*', self.batch_options).group(1)
+            except: pass
+        elif type.lower() == "local" :
+            try:
+                self.__cpu = int(re.match( r'.*cpu=(\d+)\s?.*', self.batch_options).group(1))
+            except: pass
+            try:
+                self.__memory = re.match( r'.*\s+mem=(\d+\w)\s?.*', self.batch_options).group(1)
+            except: pass
+            
+    def get_cpu(self):
+        return self.__cpu
+    
+    def get_memory(self):
+        return self.__memory
 
     def is_dynamic(self):
         return len(self.get_dynamic_outputs()) != 0

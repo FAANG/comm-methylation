@@ -46,6 +46,10 @@ class Bismark (Component):
         self.add_parameter("max_insert_size", "max_insert_size", default=max_insert_size, type="int")
         self.add_parameter("cpu", "cpu allocated for bismark (divided by 2 for bowtie option)", default=cpu, type="int")
         self.add_parameter("mem", "memory", default=mem, type="str")
+        if self.get_cpu() != None :
+            self.cpu=self.get_cpu()
+        if self.get_memory() != None :
+            self.mem=self.get_memory()
         
         self.source_file = self.reference_genome + "_source"
         extention_bowtie=""        
@@ -88,7 +92,7 @@ class Bismark (Component):
             self.args += " --non_directional"
         if not(self.bowtie1): 
             if self.cpu :
-                # 2 bowtie process are launch in directional mode so divided allocated cpu for one alignment
+                # 2 bowtie process are launch in directional mode so divided allocated cpu for each bowtie
                 self.args += " --p "+ str(int(self.cpu/2))
             self.args += " --bowtie2"
             if not os.path.dirname(self.get_exec_path("bowtie2")) == "" :
@@ -109,7 +113,6 @@ class Bismark (Component):
                                 includes=self.reference_genome, map=True)
             
            
-            ###TODO ADD samtools sort!!!!
             self.add_shell_execution(self.get_exec_path("samtools") + " sort -m "+self.mem+" -@"+str(self.cpu)+" $1 -o $2 2>>$3 ", 
                                  cmd_format='{EXE} {IN} {OUT}',
                                  inputs=[self.output_files], outputs=[self.output_files_sort,self.sort_stderr], map=True)
