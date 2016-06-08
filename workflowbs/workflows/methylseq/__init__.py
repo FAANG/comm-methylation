@@ -87,7 +87,7 @@ class MethylSeq (Workflow):
         self.add_parameter_list("context", "Type of methylation context to extract and analyze", choices=['CpG','CHG','CHH'], group="Methylation extraction parameters")
         self.add_parameter("no_overlap", "The overlapping paired reads will be ignored during extraction step  ", type=bool, default=False, flag="--no-overlap", group="Methylation extraction parameters")
         #MethylKit
-        self.add_multiple_parameter_list("test_methylkit", "Which test should be used for differential methylation analysis", group="DMC/DMR parameters with methylKit and eDMR")
+        self.add_multiple_parameter_list("test_methylkit", "Which test should be used for differential methylation analysis", group="DMC parameters for methylKit")
         self.add_parameter("test_name", "Name for test", add_to = "test_methylkit")
         self.add_parameter("pool1", "List of sample-name for pool1", required=True, add_to = "test_methylkit")         
         self.add_parameter("pool2", "List of sample-name for pool2", required=True, add_to = "test_methylkit")
@@ -96,13 +96,10 @@ class MethylSeq (Workflow):
         self.add_parameter("filter", "filter position with coverage less than 5 and with coverage above 99% quantile", type="bool", default=False, add_to = "test_methylkit")
         self.add_parameter("correct", "method to adjust p-values for multiple testing ",  choices=['BH','bonferroni'], add_to = "test_methylkit")
         self.add_parameter("alpha", "significance level of the tests (i.e. acceptable rate of false-positive in the list of DMC)",  type="float", default=0.05, add_to = "test_methylkit")
-        self.add_parameter("dmr", "Set this option to compute DMR", type="bool", default=False, add_to = "test_methylkit")
-        self.add_parameter("num_c", "cutoff of the number of CpGs (CHH or CHG) in each region to call DMR [default=3]", type="int", default=3, add_to = "test_methylkit")
-        self.add_parameter("num_dmc", "cutoff of the number DMCs in each region to call DMR [default=1]", type="int", default=1, add_to = "test_methylkit")
         self.add_parameter_list("feature", "features to plot ',' (e.g.  exon, intron, 5_prime_utr...)", add_to = "test_methylkit")
         
         
-        self.add_multiple_parameter_list("test_dss", "Which test should be used for differential methylation analysis", group="DMC/DMR parameters with DSS")
+        self.add_multiple_parameter_list("test_dss", "Which test should be used for differential methylation analysis", group="DMC/DMR parameters for DSS")
         self.add_parameter("test_name", "Name for test", add_to = "test_dss")
         self.add_parameter("pool1", "List of sample-name for pool1", required=True, add_to = "test_dss")         
         self.add_parameter("pool2", "List of sample-name for pool2", required=True, add_to = "test_dss")
@@ -196,7 +193,7 @@ class MethylSeq (Workflow):
                 if not os.path.exists(  os.path.join(os.path.dirname(indexed_control),"Bisulfite_Genome" )):
                     bismark_genome_preparation_control = self.add_component("BismarkGenomePreparation", [ self.control_genome, self.bowtie1], component_prefix="control")
                     indexed_control = bismark_genome_preparation_control.databank    
-                bismarkControl = self.add_component("Bismark", [indexed_control,trim_galore.output_files_R1, trim_galore.output_files_R2, reads_sample,self.non_directional,
+                bismarkControl = self.add_component("Bismark", [indexed_control,trim_galore .output_files_R1, trim_galore.output_files_R2, reads_sample,self.non_directional,
                                                                 self.bowtie1,self.alignment_mismatch, self.max_insert_size,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM],component_prefix=prefix+"_control")
             
         if self.start_with in ["fastq", "bam"] :
@@ -207,6 +204,7 @@ class MethylSeq (Workflow):
                 else :
                     dedup = self.add_component("RemoveDuplicate", [bams_files,self.is_paired,MethylSeq.LARGE_CPU,MethylSeq.LARGE_MEM], component_prefix=prefix)            
                     bams_files=dedup.output_bam
+            
             
         methylkit_output={}
         if self.start_with == "methylkit" :
@@ -241,11 +239,13 @@ class MethylSeq (Workflow):
                     if sample_name in to_test["pool2"]:
                         files.append(meth_file)
                         pool2.append(os.path.basename(meth_file))
+                dmr_opt=[False,0,0]
+                if "dmr" in to_test.keys() :
+                    dmr_opt=[True, to_test["num_c"], to_test["num_dmc"]]
                 prefix_str=to_test["test_name"]+"_"+c+"_norm"+str(to_test["normalization"])+"_filter"+str(to_test["filter"])+"_"+to_test["correct"]+"_"+str(to_test["alpha"]).replace(".",",")
                 methdiff = self.add_component("MethylKitDM", [files, pool1, pool2, self.id_reference, c,
                                                               to_test["normalization"],to_test["filter"],to_test["correct"],to_test["alpha"],
-                                                              to_test["stranded"],self.annotation,self.tss,self.snp_reference,
-                                                              to_test["dmr"],to_test["num_c"],to_test["num_dmc"],to_test["feature"],MethylSeq.LARGE_CPU], 
+                                                              to_test["stranded"], self.annotation, self.tss,self.snp_reference]+dmr_opt+[ to_test["feature"],MethylSeq.LARGE_CPU], 
                                               component_prefix=prefix_str)
         
         for to_test in self.test_dss :
@@ -263,9 +263,13 @@ class MethylSeq (Workflow):
                         files.append(meth_file)
                         pool2.append(os.path.basename(meth_file))
                 prefix_str=to_test["test_name"]+"_"+c+"_norm"+str(to_test["normalization"])+"_filterHigh"+str(to_test["high_cov"])+"_filterLow"+str(to_test["low_cov"])+"_"+to_test["correct"]+"_"+str(to_test["alpha"]).replace(".",",")
+                dmr_opt=[False,0,0]
+                if "dmr" in to_test.keys() :
+                    dmr_opt=[True, to_test["num_c"], to_test["num_c"]]
+                
                 methdiff = self.add_component("DssDM", [files, pool1, pool2, c,
                                                               to_test["normalization"],to_test["high_cov"],to_test["low_cov"],
-                                                              to_test["correct"],to_test["alpha"], self.annotation,self.tss,self.snp_reference,
-                                                              to_test["dmr"],to_test["num_c"],to_test["prop_dmc"],to_test["feature"],MethylSeq.LARGE_CPU], 
+                                                              to_test["correct"],to_test["alpha"], self.annotation,self.tss,self.snp_reference]+
+                                                              dmr_opt + [to_test["feature"],MethylSeq.LARGE_CPU], 
                                               component_prefix=prefix_str)
    
