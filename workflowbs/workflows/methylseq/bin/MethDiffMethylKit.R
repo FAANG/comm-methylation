@@ -22,7 +22,6 @@
 ### ---------------------Packages
 #common packages
 packages <- c("optparse", # to read arguments from a command line
-              "GenomicRanges", # to use GRange object
               "ggplot2", # nice plots
               "reshape2",  # reshape grouped data
              "ggdendro", # to plot dendrogram,
@@ -40,7 +39,8 @@ for(package in packages){
 }  
 
 #Bioconductor package
-packagesBio <- c("rtracklayer" # read gff file
+packagesBio <- c("rtracklayer", # read gff file
+				 "GenomicRanges", # to use GRange object
 )
 
 for(package in packagesBio){

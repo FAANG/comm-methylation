@@ -17,7 +17,6 @@
 
 #common packages
 packages <- c("optparse", # to read arguments from a command line
-              "GenomicRanges", # to use GRange object
               "ggplot2", # nice plots
               "reshape2",  # reshape grouped data
              "ggdendro", # to plot dendrogram,
@@ -35,13 +34,18 @@ for(package in packages){
 }  
 
 #Bioconductor package
-#read a gff file
-if (!("rtracklayer" %in% rownames(installed.packages()))) {
-  source("http://www.bioconductor.org/biocLite.R")
-  biocLite("rtracklayer")
-}
-library(rtracklayer) 
+packagesBio <- c("rtracklayer", # read gff file
+                 "GenomicRanges" # correspondance gene-DMR
+)
 
+for(package in packagesBio){
+  # if package is installed locally, load
+  if (!(package %in% rownames(installed.packages()))) {
+    source("http://www.bioconductor.org/biocLite.R")
+    biocLite(package)
+  }
+  do.call('library', list(package))
+} 
 
 #methylKit package
 if (!("methylKit" %in% rownames(installed.packages()))) {

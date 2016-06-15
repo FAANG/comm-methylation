@@ -39,9 +39,11 @@ for(package in packages){
 
 #Bioconductor package
 packagesBio <- c("DSS",# for beta-binomial model
-                 "rtracklayer", # read gff file
-                 "ChIPpeakAnno" # correspondance gene-DMR
+              "rtracklayer", # read gff file
+              "edgeR", # RLE normalization
+              "ChIPpeakAnno" # correspondance gene-DMR
 )
+
 
 for(package in packagesBio){
   # if package is installed locally, load
