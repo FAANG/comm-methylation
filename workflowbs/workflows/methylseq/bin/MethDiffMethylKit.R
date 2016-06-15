@@ -25,7 +25,6 @@ packages <- c("optparse", # to read arguments from a command line
               "GenomicRanges", # to use GRange object
               "ggplot2", # nice plots
               "reshape2",  # reshape grouped data
-             "edmr", # to find DMR
              "ggdendro", # to plot dendrogram,
              "plyr", # for matrix plots
              "VennDiagram", # for Venn diagram
@@ -41,8 +40,7 @@ for(package in packages){
 }  
 
 #Bioconductor package
-packagesBio <- c("rtracklayer", # read gff file
-                 "ChIPpeakAnno" # correspondance gene-DMR
+packagesBio <- c("rtracklayer" # read gff file
 )
 
 for(package in packagesBio){
@@ -69,7 +67,7 @@ if (!("methylKit" %in% rownames(installed.packages()))) {
 library(methylKit)
 
 
-
+sessionInfo()
 
 
 ### ---------------------Parameters
@@ -113,17 +111,6 @@ option_list = list(
   make_option(c("--correct"), type = "character", default = "BH",
               help = "method used to adjust p-values for multiple testing 
               ('BH' or 'bonferroni') [default=%default]", metavar = "character"),
-  make_option(c("--dmr"), type = "logical", default = FALSE,
-              help = "if TRUE DMR are extract [default=%default]", 
-              metavar = "character"),
-  make_option(c("--dmr.numC"), type = "double", default = 3,
-              help = "cutoff of the number of CpGs (CHH or CHG) in each region 
-              to call DMR [default=%default]", 
-              metavar = "character"),
-  make_option(c("--dmr.numDMC"), type = "double", default = 1,
-              help = "cutoff of the number DMCs in each region to call DMR 
-              [default=%default]", 
-              metavar = "character"),
   make_option(c("-s", "--SNP"), type = "character", default = NULL, 
              help = "SNP file path and name (files format (without colnames): chr    pos)", 
              metavar = "character"),
@@ -171,6 +158,11 @@ if ((is.null(opt$files) & is.null(opt$directory)) | is.null(opt$out)) {
 if (is.null(opt$pool1) | is.null(opt$pool2)) {
   print_help(opt_parser)
   stop("pools are necessary.\n", call. = FALSE)
+}
+
+#control on correction method
+if (opt$plots & !is.null(opt$gff) & is.null(opt$type)){
+  stop("type of feature (--type) are necessary when plots = TRUE and gff not NULL.")
 }
 
 #Create output folder if it didn't exist
@@ -253,7 +245,7 @@ sample_info$sample <- as.character(sample_info$sample)
 sample_info$name <- sapply(strsplit(sample_info$sample,"[.]"), head, n = 1)
 
 #####################################################
-### ---------------------------DMC/DMR with methylKit
+### ---------------------------DMC with methylKit
 #####################################################
 
 #Input raw data
@@ -318,88 +310,13 @@ print(paste0("############### Number of DMC : ", nrow(res_DMC)))
 res_DMC_grange <- GRanges(seqnames = res_DMC$chr, ranges = IRanges(res_DMC$end, res_DMC$end),
                           strand = res_DMC$strand, name = res_DMC$pool1, score = res_DMC$meth.diff)
 
-export(res_DMC_grange, normalizePath(file.path(opt$out, "DMC.bed"), mustWork = FALSE), 
+if(nrow(res_DMC) > 0){
+  export(res_DMC_grange, normalizePath(file.path(opt$out, "DMC.bed"), mustWork = FALSE), 
        trackLine=new("BasicTrackLine", name = "DMC", 
                      description = paste0("pool1 (", paste(sample_info$name[sample_info$condition == 1], collapse = ", "),
                                           ") vs pool2 (", paste(sample_info$name[sample_info$condition == 2], collapse = ", "), ")"), 
                      useScore = TRUE))
-
-
-
-#DMR
-if (opt$dmr){
-  #find DMR
-  res_DMR <- NULL
-  
-  try(res_DMR <- edmr(res_test, DMC.qvalue = opt$alpha, DMC.methdiff = 0,
-                  num.DMCs = opt$dmr.numDMC, num.CpGs = opt$dmr.numC, DMR.methdiff = 0,
-                  mode = 1, ACF = TRUE), silent = TRUE)
-  
-  if(!is.null(res_DMR)){
-    #save list of DMR
-    dmr <- data.frame(chr = seqnames(res_DMR),
-                      starts = start(res_DMR)-1,
-                      ends = end(res_DMR),
-                      strands = strand(res_DMR),
-                      mean.meth.diff = res_DMR@elementMetadata@listData$mean.meth.diff,
-                      num.CpGs = res_DMR@elementMetadata@listData$num.CpGs,
-                      num.DMCs = res_DMR@elementMetadata@listData$num.DMCs)
-    dmr$pool1 <- ifelse(dmr$mean.meth.diff > 0, "UP", "DOWN")
-    
-    
-    
-    print(paste0("############### Number of DMR : ", nrow(dmr)))
-    
-  } else {
-    dmr <- matrix(ncol = 7, nrow=0)
-    colnames(dmr) <- c("chr", "starts", "ends", "strands", "mean.meth.diff",
-                       "num.CpGs", "num.DMCs")
-    dmr <- as.data.frame(dmr)
-    print("############### Number of DMR : 0")
-  }
-  
-  write.table(dmr, file = normalizePath(file.path(opt$out, "DMR.txt"), 
-                                        mustWork = FALSE), sep = "\t", 
-              row.names = FALSE, quote = FALSE)
-  
-  res_DMR_grange <- GRanges(seqnames = dmr$chr, ranges = IRanges(dmr$start, dmr$end),
-                            name = dmr$pool1, score = dmr$mean.meth.diff)
-  
-  export(res_DMR_grange, normalizePath(file.path(opt$out, "DMR.bed"), mustWork = FALSE), 
-         trackLine=new("BasicTrackLine", name = "DMR", 
-                       description = paste0("pool1 (", paste(sample_info$name[sample_info$condition == 1], collapse = ", "),
-                                            ") vs pool2 (", paste(sample_info$name[sample_info$condition == 2], collapse = ", "), ")"), 
-                       useScore = TRUE))
-  
-  ## Correspondance DMR-gene
-  if(!is.null(opt$gff)){
-    ## gff file
-    gff <- import.gff3(opt$gff)
-    
-    if(sum(gff@elementMetadata@listData$type == "gene", na.rm = TRUE) > 0 & nrow(dmr) > 0){
-      res_DMR_grange_annot <- GRanges(seqnames = dmr$chr, ranges = IRanges(dmr$starts, dmr$ends))
-      gene_grange <- GRanges(seqnames = seqnames(gff)[gff@elementMetadata@listData$type == "gene"],
-                             IRanges(start(gff)[gff@elementMetadata@listData$type == "gene"],
-                                     end = end(gff)[gff@elementMetadata@listData$type == "gene"],
-                                     names = gff@elementMetadata@listData$Name[gff@elementMetadata@listData$type == "gene"]))
-      annotatedDMR <- suppressWarnings(annotatePeakInBatch(res_DMR_grange_annot, 
-                                                           AnnotationData=gene_grange, 
-                                                           output = "both"))
-      
-      write.table(as.data.frame(annotatedDMR)[, c("seqnames", "start", "end", 
-                                                  "feature", "start_position", 
-                                                  "end_position", "insideFeature",
-                                                  "distancetoFeature",
-                                                  "shortestDistance")], 
-                  file = normalizePath(file.path(opt$out, "DMRannoted.txt"), 
-                                       mustWork = FALSE), sep = "\t", 
-                  row.names = FALSE, quote = FALSE)
-      
-    }
-  }
-  
 }
-
 
 
 
@@ -534,7 +451,7 @@ if(opt$plots){
       geom_segment(data=segment(dendr), aes(x=x, y=y.x, xend=xend, yend=yend), 
                    size = 1) +
       scale_x_continuous(breaks = seq_along(sample_info$sample), 
-                         labels = sapply(strsplit(sample_info$sample,"[.]"), head, n = 1)) + 
+                         labels = sapply(strsplit(as.character(dendr$labels$label),"[.]"), head, n = 1)) + 
       ylab("Distance") +
       theme(axis.line.x=element_blank(),
             axis.ticks.x=element_blank(),
@@ -751,8 +668,8 @@ if(opt$plots){
     
     overlaps_total <- suppressWarnings(findOverlaps(cytosines_X_N, annotGrange))
     
-    if(length(overlaps_total@subjectHits) > 0){
-      notempty <- unique(as.numeric(overlaps_total@subjectHits))
+    if(length(subjectHits(overlaps_total)) > 0){
+      notempty <- unique(as.numeric(subjectHits(overlaps_total)))
       prop_by_type <- adply(annot[notempty,], 1, propTypeFunc, .parallel = opt$parallel)
       
       
@@ -815,8 +732,8 @@ if(opt$plots){
     
     overlaps_total <- suppressWarnings(findOverlaps(prop_after_grange, tssGrange))
     
-    if(length(overlaps_total@subjectHits) > 0){
-      notempty <- unique(as.numeric(overlaps_total@subjectHits))
+    if(length(subjectHits(overlaps_total)) > 0){
+      notempty <- unique(as.numeric(subjectHits(overlaps_total)))
       dist_to_tss <- adply(tss[notempty,], 1, tssFunc, .parallel = opt$parallel)
       
       

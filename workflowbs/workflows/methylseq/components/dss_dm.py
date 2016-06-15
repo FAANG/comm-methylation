@@ -23,7 +23,7 @@ class DssDM (Component):
 
     def define_parameters(self, meth_files, pool1, pool2, context, normalization="libsize", 
                           high_filter=None,low_filter=None, correct='BH',alpha=0.05, gff=None, tss=None, snp=None, 
-                          dmr=False, num_c=3, prop_dmc=0.5, feature=[], num_cpu=1):
+                          dmr=False, num_c=3, prop_dmc=0.5,type_dmr="qvalue", feature=[], num_cpu=1):
         
         self.add_input_file_list( "meth_files", "The differential methylation output file", default=meth_files, required=True )
         self.add_parameter_list("pool1","Pool1", default=pool1, required=True)
@@ -37,6 +37,7 @@ class DssDM (Component):
         self.add_parameter("dmr", "Set to 1 to compute DMR", type="bool", default=dmr)
         self.add_parameter("num_c", "cutoff of the number of CpGs (CHH or CHG) in each region to call DMR [default=3]", type="int", default=num_c)
         self.add_parameter("prop_dmc", "cutoff of the proportion of DMCs in each region to call DMR", type="float", default=prop_dmc)
+        self.add_parameter("dmr_type", "Use DMC q or p value for DMR detection [qvalue|pvalue]", default=type_dmr, choices=['qvalue','pvalue'])
         self.add_parameter_list("feature", "features to plot ',' (e.g.  exon, intron, 5_prime_utr...)", default=feature)
         self.add_input_file("annotation", "annotation file (gff ot gtf files), used in DMC categorization", default=gff)
         self.add_input_file("tss", "file with TSS positions (files format: chr    tss    strand), used to plot methylation level around TSS", default=tss)
@@ -74,7 +75,7 @@ class DssDM (Component):
             self.dss_options += " --tss " + self.tss
             self.dss_includes.append(self.tss)
         if dmr :
-            self.dss_options += " --dmr 'TRUE' --dmr.numC " +  str(self.num_c) + " --dmr.propDMC " + str(self.prop_dmc)
+            self.dss_options += " --dmr 'TRUE' --dmr.numC " +  str(self.num_c) + " --dmr.propDMC " + str(self.prop_dmc) + " --dmr.type " + str(self.dmr_type)
         if self.num_cpu > 1 :
             self.dss_options += " --parallel 'TRUE' --ncore " + str(self.num_cpu)
             self.pre_options += " --parallel 'TRUE' --ncore " + str(self.num_cpu)

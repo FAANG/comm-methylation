@@ -52,7 +52,7 @@ for(package in packagesBio){
   do.call('library', list(package))
 } 
 
-
+sessionInfo()
 ### ---------------------Parameters
 
 #############
@@ -126,7 +126,6 @@ opt_parser = OptionParser(usage="Imports data and find DMC.",
 opt = parse_args(opt_parser)
 
 
-
 #file names are needed to continue
 if ((is.null(opt$files) & is.null(opt$directory)) | is.null(opt$out)) {
   print_help(opt_parser)
@@ -143,6 +142,12 @@ if (is.null(opt$pool1) | is.null(opt$pool2)) {
 if (!(opt$correct %in% c("BH", "bonferroni"))){
   stop("This normalization method doesn't exist.")
 }
+
+#control on correction method
+if (opt$plots & !is.null(opt$gff) & is.null(opt$type)){
+  stop("type of feature (--type) are necessary when plots = TRUE and gff not NULL.")
+}
+
 
 #Create output folder if it didn't exist
 ifelse(!dir.exists(opt$out), dir.create(opt$out), FALSE)
@@ -254,11 +259,13 @@ write.table(res_DMC, file = normalizePath(file.path(opt$out, "DMC.txt"),
 res_DMC_grange <- GRanges(seqnames = res_DMC$chr, ranges = IRanges(res_DMC$end, res_DMC$end),
                           strand = res_DMC$strand, name = res_DMC$pool1, score = res_DMC$diff)
 
-export(res_DMC_grange, normalizePath(file.path(opt$out, "DMC.bed"), mustWork = FALSE), 
+if(nrow(res_DMC) > 0){
+  export(res_DMC_grange, normalizePath(file.path(opt$out, "DMC.bed"), mustWork = FALSE), 
        trackLine=new("BasicTrackLine", name = "DMC", 
                      description = paste0("pool1 (", paste(sample_info$name[sample_info$condition == 1], collapse = ", "),
                                           ") vs pool2 (", paste(sample_info$name[sample_info$condition == 2], collapse = ", "), ")"), 
                      useScore = TRUE))
+}
 
 ## DMR
 if (opt$dmr){
@@ -271,8 +278,9 @@ if (opt$dmr){
   }
   
   #find DMR
-  res_DMR <- callDMR(dmlTest, delta = 0, p.threshold = opt$alpha, 
-                     minCG = opt$dmr.numC, pct.sig = opt$dmr.propDMC)
+  try(res_DMR <- callDMR(dmlTest, delta = 0, p.threshold = opt$alpha, 
+                     minCG = opt$dmr.numC, pct.sig = opt$dmr.propDMC), 
+      silent = TRUE)
   
   if(!is.null(res_DMR)){
     print(paste0("############### Number of DMR : ", nrow(res_DMR)))
@@ -294,11 +302,13 @@ if (opt$dmr){
   res_DMR_grange <- GRanges(seqnames = res_DMR$chr, ranges = IRanges(res_DMR$start, res_DMR$end),
                             name = res_DMR$pool1, score = res_DMR$diff)
   
-  export(res_DMR_grange, normalizePath(file.path(opt$out, "DMR.bed"), mustWork = FALSE), 
+  if(nrow(res_DMR) > 0){
+    export(res_DMR_grange, normalizePath(file.path(opt$out, "DMR.bed"), mustWork = FALSE), 
          trackLine=new("BasicTrackLine", name = "DMR", 
                        description = paste0("pool1 (", paste(sample_info$name[sample_info$condition == 1], collapse = ", "),
                                             ") vs pool2 (", paste(sample_info$name[sample_info$condition == 2], collapse = ", "), ")"), 
                        useScore = TRUE))
+  }
   
   if(!is.null(opt$gff)){
     ## gff file
@@ -326,7 +336,7 @@ if (opt$dmr){
       
     }
   }
-  
+
 }
 
 
@@ -402,7 +412,7 @@ if(opt$plots){
         xlab("Type of region") + ylab("Frequency") + ggtitle("Number of DMC by type of region") +
         theme_bw()
       print(p)
-      
+
       #Venn diagram
       if (nrow(number_type) > 1){
         plot.new()
@@ -451,10 +461,9 @@ if(opt$plots){
     #apply function only on C in a predefine type of region
     overlaps_total <- suppressWarnings(findOverlaps(cytosines_X_N, annotGrange))
     
-    if(length(overlaps_total@subjectHits) > 0){
-      notempty <- unique(as.numeric(overlaps_total@subjectHits))
+    if(length(subjectHits(overlaps_total)) > 0){
+      notempty <- unique(as.numeric(subjectHits(overlaps_total)))
       prop_by_type <- adply(annot[notempty,], 1, propTypeFunc, .parallel = opt$parallel)
-      
       
       #plot
       my_stats <- function(x) {
@@ -515,8 +524,8 @@ if(opt$plots){
     
     #apply the function only on C in TSS windows
     overlaps_total <- suppressWarnings(findOverlaps(prop_after_table, tssGrange))
-    if(length(overlaps_total@subjectHits) > 0){
-      notempty <- unique(as.numeric(overlaps_total@subjectHits))
+    if(length(subjectHits(overlaps_total)) > 0){
+      notempty <- unique(as.numeric(subjectHits(overlaps_total)))
       dist_to_tss <- adply(tss[notempty,], 1, tssFunc, .parallel = opt$parallel)
       
       dist_to_tss <- dist_to_tss[, -c(1:3)]

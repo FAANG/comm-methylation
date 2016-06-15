@@ -27,15 +27,8 @@
   * Trim_galore v0.4
   * Bismark 1.15
   * Bowtie 1 or Bowtie 2
-  * R 3.2.2 or higher (If you run Cm extraction and statistics analyze)
-	R packages : please install the following packages
-	** methylKit
-	** optparse (available from CRAN)
-	info: if packages are not available, the script automatically install it 
-	but note that if you are on a cluster the R_LIBS environment variable must
-	be set to an existing directory located in your home directory 
-  home directory.
-
+  * R 3.3.0  (If you statistics analyze)
+	
 ##############################################################################
 ## INSTALLATION
 Go into workflows directory of jflow application
@@ -44,6 +37,7 @@ cd jflow/workflows
 Retrieve pipeline methylseq
 svn checkout svn://scm.mulcyber.toulouse.inra.fr/svnroot/jflow-toolshed/trunk/methylseq
 
+R packages installation:
 if you are in a distribuated system and you can not install R package, fix the env variable $R_LIBS=~/Rlib and create directory.
 eg :
 export R_LIBS="~/save/Rlib"
@@ -52,38 +46,10 @@ And then run the scripts
 Rscript ./methylseq/bin/install_r_package_for_dss.R
 Rscript ./methylseq/bin/install_r_package_for_methylkit.R
 
+Info: if packages are not available on the system, the script automatically install it 
+but note that if you are on a multi-user system the R_LIBS environment variable must
+be set to an existing directory located in your home directory.
 
-## To display the global help :
-
-python3 ./bin/jflow_cli.py -h
-usage: jflow_cli.py [-h]
-                    {rerun,reset,delete,execution-graph,status,methylseq} ...
-
-optional arguments:
-  -h, --help            show this help message and exit
-
-Available sub commands:
-  {rerun,reset,delete,execution-graph,status,methylseq}
-    rerun               Rerun a specific workflow
-    reset               Reset a workflow component
-    delete              Delete a workflow
-    execution-graph     Display the workflow execution graph
-    status              Monitor a specific workflow
-    methylseq           Align BSseq reads against a reference genome
-
-
-Use sub command methylseq to display the help :
-
-usage: jflow_cli.py methylseq [-h] --reference-genome REFERENCE_GENOME
-                              [--control-genome CONTROL_GENOME]
-                              [--snp-reference SNP_REFERENCE] --sample
-                              INPUT_SAMPLE [INPUT_SAMPLE ...] [--is-single]
-                              [--rrbs] [--non-directional]
-                              [--alignment-mismatch ALIGNMENT_MISMATCH]
-                              [--max-insert-size MAX_INSERT_SIZE] [--bowtie1]
-                              [--no-rmdup] [--coverage COVERAGE]
-                              [--context {CpG,CHG,CHH}]
-                              [--test TEST [TEST ...]]
 
 
 
@@ -132,18 +98,3 @@ Example :
 # Support
 Support is available by email at support.genopole@toulouse.inra.fr
 
-=======
-
-
-CONFIGURATION TO SET IN jflow/application.properties IN [softwares] SECTION
-#uncomment and set if not in the PATH
-#fastqc = 
-#samtools = /usr/bin/samtools
-#trim_galore = /nosave/software/trim_galore
-#bismark = /nosave/software/bismark_v0.13.0/bismark
-#bismark_genome_preparation = /nosave/software/bismark_v0.13.0/bismark_genome_preparation
-#bowtie2 =  /usr/bin/bowtie2
-#R > v3.2
-#Rscript=<path>/R-3.2.2/bin/Rscript
-
->>>>>>> 66a002db5bedc12c63f646ad6439756dc5dfdbc1

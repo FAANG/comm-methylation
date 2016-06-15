@@ -38,7 +38,8 @@ for(package in packages){
 #Bioconductor package
 packagesBio <- c("DSS",# for beta-binomial model
               "rtracklayer", # read gff file
-              "edgeR" # RLE normalization
+              "edgeR", # RLE normalization
+              "ChIPpeakAnno" # correspondance gene-DMR
 )
 
 for(package in packagesBio){
@@ -49,3 +50,5 @@ for(package in packagesBio){
   }
   do.call('library', list(package))
 } 
+
+sessionInfo()

@@ -53,6 +53,8 @@ for(package in packages_bio){
 } 
 
 
+sessionInfo()
+
 ### ---------------------Parameters
 
 #############
@@ -508,7 +510,7 @@ if(opt$plots){
       geom_segment(data=segment(dendr), aes(x=x, y=y.x, xend=xend, yend=yend), 
                    size = 1) +
       scale_x_continuous(breaks = seq_along(sample_info$sample), 
-                         labels = sapply(strsplit(sample_info$sample,"[.]"), head, n = 1)) + 
+                         labels = sapply(strsplit(as.character(dendr$labels$label),"[.]"), head, n = 1)) + 
       ylab("Distance") +
       theme(axis.line.x=element_blank(),
             axis.ticks.x=element_blank(),

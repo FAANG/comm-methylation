@@ -1,3 +1,15 @@
+* 05/15/2016
+
+- Use R3.3.0
+- Add DMR annotation
+- Add option to select DMR detection with qvalue or pvalue (pvalue is DSS stantard use)
+
+* 04/03/2016
+- Add DSS to workflow
+- Add graphics per feature
+- Add real bed file output
+- Remove eDMR  (as it was removed from CRAN) 
+
 * 04/26/2016
 Debug when extract several context in methylation calling component
 

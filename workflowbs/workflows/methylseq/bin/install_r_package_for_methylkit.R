@@ -55,3 +55,5 @@ if (!("methylKit" %in% rownames(installed.packages()))) {
   install_github("al2na/methylKit", build_vignettes = FALSE)
 }
 library(methylKit)
+
+sessionInfo()

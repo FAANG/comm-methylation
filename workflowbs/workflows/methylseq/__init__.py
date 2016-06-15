@@ -111,6 +111,7 @@ class MethylSeq (Workflow):
         self.add_parameter("dmr", "Set this option to compute DMR", type="bool", default=False, add_to = "test_dss")
         self.add_parameter("num_c", "cutoff of the number of CpGs (CHH or CHG) in each region to call DMR [default=3]", type="int", default=3, add_to = "test_dss")
         self.add_parameter("prop_dmc", "cutoff of the proportion of DMCs in each region to call DMR [default=0.5]", type="float", default=0.5, add_to = "test_dss")
+        self.add_parameter("dmr_type", "Use DMC q or p value for DMR detection [qvalue|pvalue]", default="qvalue",choices=['qvalue','pvalue'], add_to = "test_dss")
         self.add_parameter_list("feature", "features to plot ',' (e.g.  exon, intron, 5_prime_utr...)", add_to = "test_dss")
         
         #output
@@ -265,8 +266,8 @@ class MethylSeq (Workflow):
                 prefix_str=to_test["test_name"]+"_"+c+"_norm"+str(to_test["normalization"])+"_filterHigh"+str(to_test["high_cov"])+"_filterLow"+str(to_test["low_cov"])+"_"+to_test["correct"]+"_"+str(to_test["alpha"]).replace(".",",")
                 dmr_opt=[False,0,0]
                 if "dmr" in to_test.keys() :
-                    dmr_opt=[True, to_test["num_c"], to_test["num_c"]]
-                
+                    dmr_opt=[True, to_test["num_c"], to_test["num_c"],to_test["dmr_type"]]
+                    
                 methdiff = self.add_component("DssDM", [files, pool1, pool2, c,
                                                               to_test["normalization"],to_test["high_cov"],to_test["low_cov"],
                                                               to_test["correct"],to_test["alpha"], self.annotation,self.tss,self.snp_reference]+
