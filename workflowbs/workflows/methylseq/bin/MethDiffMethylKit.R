@@ -40,7 +40,7 @@ for(package in packages){
 
 #Bioconductor package
 packagesBio <- c("rtracklayer", # read gff file
-		 "GenomicRanges" # to use GRange object
+				 "GenomicRanges" # to use GRange object
 )
 
 for(package in packagesBio){
@@ -211,11 +211,17 @@ if(!is.null(opt$SNP)){
   snp <- read.table(opt$SNP) #Read SNP table without header
 }
 
+
+
 #keep only position covered on all samples and not SNP
 files <- list()
 keep <- NULL
 for(i in seq_along(filenames)){
   files[[i]] <- read.table(l[i], header = TRUE)
+  
+  if(is.numeric(files[[i]]$chrBase)){
+    files[[i]]$chrBase <- paste0(files[[i]]$chr,".",files[[i]]$base)
+  }
   
   if (i == 1){
     keep <- files[[i]]$chrBase
@@ -251,11 +257,12 @@ sample_info$name <- sapply(strsplit(sample_info$sample,"[.]"), head, n = 1)
 #Input raw data
 meth_data <- read(as.list(l), sample.id = as.list(filenames), 
                   assembly = opt$reference, context = opt$context,
-                  treatment = ifelse(filenames %in% pool1, 1, 0))
+                  treatment = ifelse(filenames %in% pool1, 1, 0),
+                  mincov = 0)
 
 
 #filter on high coverage
-if (opt$filter){
+if (opt$filter){s
   meth_data <- filterByCoverage(meth_data, hi.perc = 99)
   print("############### Filter on high coverage : DONE")
 } else {
