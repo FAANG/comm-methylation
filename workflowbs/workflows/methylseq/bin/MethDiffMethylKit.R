@@ -40,7 +40,7 @@ for(package in packages){
 
 #Bioconductor package
 packagesBio <- c("rtracklayer", # read gff file
-				 "GenomicRanges", # to use GRange object
+		 "GenomicRanges" # to use GRange object
 )
 
 for(package in packagesBio){
