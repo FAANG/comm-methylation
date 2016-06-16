@@ -262,7 +262,7 @@ meth_data <- read(as.list(l), sample.id = as.list(filenames),
 
 
 #filter on high coverage
-if (opt$filter){s
+if (opt$filter){
   meth_data <- filterByCoverage(meth_data, hi.perc = 99)
   print("############### Filter on high coverage : DONE")
 } else {

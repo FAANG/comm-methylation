@@ -47,7 +47,9 @@ Follow the instructions in the README.md file (this file ;) )
 To install R package (with version of R > 3.2.2) you can run the scripts :
  * Rscript faang-methylation/workflowbs/workflows/methylseq/bin/install_r_package_for_dss.R
  * Rscript faang-methylation/workflowbs/workflows/methylseq/bin/install_r_package_for_methylkit.R
-	
+
+Use Methylkit V 0.9.6 !!
+
 Note : eDmr is no more available at CRAN, so the DMR cannot be found with Methylkit results.
 
 # 3 - Configuration
