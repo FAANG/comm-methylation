@@ -1,3 +1,7 @@
+* 06/20/2016
+
+- set usable by several user on multi-user machine
+
 * 05/15/2016
 
 - Use R3.3.0

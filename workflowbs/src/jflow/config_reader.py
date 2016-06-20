@@ -37,12 +37,12 @@ class JFlowConfigReader(object):
         self.reader.read(os.path.join(os.path.dirname(inspect.getfile(self.__class__)), self.CONFIG_FILE_PATH))
 
     def get_tmp_directory(self):
-        if not os.path.isdir(self.reader.get("storage", "tmp_directory")):
-            os.makedirs(self.reader.get("storage", "tmp_directory"), 0o751)
-        return self.reader.get("storage", "tmp_directory")
+        if not os.path.isdir(self.reader.get("storage", "tmp_directory").replace("$USER",os.getenv("USER"))):
+            os.makedirs(self.reader.get("storage", "tmp_directory").replace("$USER",os.getenv("USER")), 0o751)
+        return self.reader.get("storage", "tmp_directory").replace("$USER",os.getenv("USER"))
         
     def get_work_directory(self):
-        return self.reader.get("storage", "work_directory")
+        return self.reader.get("storage", "work_directory").replace("$USER",os.getenv("USER"))
     
     def get_exec(self, software):
         try:
@@ -59,7 +59,7 @@ class JFlowConfigReader(object):
           @return: the path to the log file
         """
         try:
-            return self.reader.get('storage', 'log_file')
+            return self.reader.get('storage', 'log_file').replace("$USER",os.getenv("USER"))
         except :
             raise NoOptionError("Failed when parsing the config file, no section logging found!")
         
