@@ -209,6 +209,8 @@ filenames <- filenames[filenames %in% c(pool1, pool2)]
 
 if(!is.null(opt$SNP)){
   snp <- read.table(opt$SNP) #Read SNP table without header
+  #get 0-based position
+  snp$V2=snp$V2-1
 }
 
 

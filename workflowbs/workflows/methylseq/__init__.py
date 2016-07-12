@@ -53,7 +53,7 @@ class MethylSeq (Workflow):
     def define_parameters(self, function="process"):
         self.add_input_file("reference_genome", "Which genome should the read being align on", file_format="fasta", required=True, group="Input files")
         self.add_input_file("control_genome", "Control reference sequence", file_format="fasta", group="Input files")
-        self.add_input_file("snp_reference", "VCF file of known SNP to remove from the analysis",  group="Input files")
+        self.add_input_file("snp_reference", "VCF file of known SNP to remove the position from the methylation extraction files",  group="Input files")
         self.add_input_file("annotation", "annotation file (gff ot gtf files), used in DMC categorization", group="Input files")
         self.add_input_file("tss", "file with TSS positions (files format: chr    tss    strand), used to plot methylation level around TSS", group="Input files")
         

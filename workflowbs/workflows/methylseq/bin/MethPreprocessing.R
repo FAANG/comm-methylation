@@ -178,7 +178,9 @@ names <- names[names %in% c(pool1, pool2)]
 
 #read SNP table
 if(!is.null(opt$SNP)){
-  snp <- read.table(opt$SNP, header=TRUE) #Read SNP table
+  snp <- read.table(opt$SNP, header=FALSE) #Read SNP table
+  #get 0-based position
+  snp$V2=snp$V2-1
 }
 
 #read all files
@@ -244,7 +246,7 @@ for (i in seq_along(l)){
   #Remove SNP
   if(!is.null(opt$SNP)){
     files[[i]] <- files[[i]][!is.element(paste0(files[[i]]$chr,"_",files[[i]]$pos),
-                                         paste0(snp$chr,"_",snp$pos)),]
+                                         paste0(snp$V1,".",snp$V2)),]
     print("############### Remove SNP : DONE")
   }
 }
