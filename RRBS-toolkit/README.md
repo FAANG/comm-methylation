@@ -28,6 +28,9 @@ Directory contains a script to compare 2 or 3 analysis results.
 
 In each one of these directories, you will find a dedicated readme file (in pdf format) describing the main goals of the step and how to use scripts.
 
+Schema describing the relationships existing between the main modules:
+![RRBS toolkit schema](https://github.com/ljouneau/RRBS-toolkit/edit/master/RRBBS_toolkit_schema.png)
+
 <H1>Technical prerequisites</H1>
 
 Our scripts have been developped in :
@@ -43,5 +46,5 @@ It integrates several external tools :
 
 All these tools should be installed before to use RRBS toolkit.
 
-Once all these prerequisites are satisfied, you should edit file **RRBS_HOME/config.sh** and change the path to these external tools.
+Once all these prerequisites are satisfied, you should edit file **RRBS_HOME/config.sh** and change the path to these external tools (**RRBS_HOME** referes to the path where RRBS toolkit is installed).
 
