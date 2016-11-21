@@ -1,7 +1,7 @@
 Set of scripts to analyse RRBS data, from the optimisation of experimental design up to the identification of differentially methylated regions
 =======
 
-Our pipeline is a comprehensive set of tools allowing to conduct RRBS analysis, from the optimisation of experimentaldesign, up to the identification of differentially methylated regions DMRs between two groups of samples.
+Our pipeline is a comprehensive set of tools allowing to conduct RRBS analysis, from the optimisation of experimental design, up to the identification of differentially methylated regions DMRs between two groups of samples.
 
 <H1>Organisation of scripts</H1>
 
@@ -39,10 +39,9 @@ It integrates several external tools :
 * [Trim galore!](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/)
 * [Bismark](http://www.bioinformatics.babraham.ac.uk/projects/bismark)
 * [Bowtie](http://bowtie-bio.sourceforge.net/index.shtml)
-* [Trim galore!](http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/)
 * [samtools](http://samtools.sourceforge.net/)
 
 All these tools should be installed before to use RRBS toolkit.
 
-Once all these prerequisites are satisfied, you should edit file RRBS_HOME/config.sh and change the path to these external tools.
+Once all these prerequisites are satisfied, you should edit file **RRBS_HOME/config.sh** and change the path to these external tools.
 
