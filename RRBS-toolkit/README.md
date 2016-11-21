@@ -28,7 +28,7 @@ Directory contains a script to compare 2 or 3 analysis results.
 
 In each one of these directories, you will find a dedicated readme file (in pdf format) describing the main goals of the step and how to use scripts.
 
-Schema describing the relationships existing between the main modules:
+<H2>Schema describing the relationships existing between the main modules:</H2>
 ![RRBS toolkit schema](https://github.com/ljouneau/RRBS-toolkit/blob/master/RRBBS_toolkit_schema.png)
 
 <H1>Technical prerequisites</H1>
