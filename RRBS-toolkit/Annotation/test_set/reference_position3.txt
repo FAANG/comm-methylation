@@ -1,0 +1,6 @@
+Info1	Chromosome	Position	Info2
+A1	chr4	1510	No match if no interval shift
+A2	4	1910	Always match
+A1	chr4	3500	No match if no interval shift
+A1	4	4500	No match if no interval shift
+A6	4	30000	never match

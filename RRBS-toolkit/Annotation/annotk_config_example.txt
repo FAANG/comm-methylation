@@ -1,0 +1,37 @@
+file_to_annotate        in/DMRs_between_C1_C2.txt
+file_format             tab
+output_file             out/DMRs_between_C1_C2_annotated.txt
+keep_scaffolds          No
+
+theme                           Gene features
+        join_type               gtf
+        target_keys             Chromosome,Position
+        reference_file          reference/Bos_taurus.UMD3.1.81.gtf
+        nb_max_results          3
+        max_dist_nearest_gene   10kb
+
+theme                   Gene
+        join_type       value
+        target_keys     Gene ID
+        reference_file  reference/bovine_biomart81.txt
+        reference_keys  Ensembl Gene ID
+
+theme                   Repeats
+        join_type       location
+        target_keys     Chromosome,Position
+        reference_file  reference/bovine_repeats.txt
+        reference_keys  1,2,3
+        min_overlap     75%
+
+
+theme                   CpG islands
+        join_type       location
+        target_keys     Chromosome,Position
+        reference_file  reference/bovine_CGI.txt
+        reference_keys  1,2,3
+        min_overlap     0%
+        nb_max_results  all
+        interval_shift	0       island
+        interval_shift	2000    shore
+        interval_shift	4000    shelves
+

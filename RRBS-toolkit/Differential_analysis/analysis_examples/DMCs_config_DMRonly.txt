@@ -1,0 +1,25 @@
+#This configuration produces a file containing DMRs
+#from a file containing DMCs positions.
+#
+#Input file format :
+#Chromosome Start <any other columns> Methylation fold change
+#
+#The last column ("Methylation fold change") should be filled with 
+#two possible values : 'hypometh' or 'hypermeth'
+#
+#Example :
+#Chromosome     Start   ...   Methylation fold change
+#1              123456  ...   hypermeth
+#1              234567  ...   hypometh
+#
+#Global parameters:
+#----------------------
+#output_dir	./out_DMR_only
+#
+#
+#DMCs -> DMRs parameters:
+#------------------------
+#nb_min_DMCs_in_DMRs	3
+#max_distance_between_DMCs	100
+#DMC_file	out_methylKit/MethylKit - Condition A vs B - pvalue0.05.txt
+#DMR_file	DMRs_output_file.txt 

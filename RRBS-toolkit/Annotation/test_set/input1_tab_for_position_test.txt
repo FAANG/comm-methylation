@@ -1,0 +1,13 @@
+Info tgt 1	Chromosome	Start	End	Info tgt 2
+A1	chr1	100	200	No match
+A2	1	501	1000	Match only if min_overlap=0 (% target overlap=1/500)
+A3	chr1	901	1000	Match only if min_overlap>=1% (% target overlap=1/100)
+A4	chr1	999	1000	Match only if min_overlap>=50% (% target overlap=1/2)
+A5	1	990	1010	Match only if min_overlap>=50% (% target overlap=10/20)
+A6	chr1	1000	1000	Match always (% target overlap = 1/1)
+A7	1	100	1250	Match only if min_overlap>=50% (% reference overlap=1/2)
+A8	1	100	1500	Match always (% reference overlap=100%)
+B1	chr2	1000	2000	test ordering : [1000;1500] should be first
+B2	2	1400	1701	test ordering : [1600;2000] should be first
+B3	chr3	1300	1600	test ordering : [1450;1550] then [1200;1800] then [1000;2000]
+B4	3	1000	1220	test ordering : [1000;2000] then [1200;1800]

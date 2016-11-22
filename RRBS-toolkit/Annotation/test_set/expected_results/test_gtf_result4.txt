@@ -1,0 +1,86 @@
+Info1	Chromosome	Start	End	Comment	# overlap	Gene ID	Distance from target	Gene feature
+A1	chr1	100	110	outside gene and distance to nearest gene downstream>400				
+A2	1	1690	1700	outside gene and distance to nearest gene downstream<400				
+A3	chr1	2600	2610	outside gene and distance to nearest gene upstream<400				
+A4	chr1	2800	2850	outside gene and distance to nearest gene downstream<400				
+A5	1	5000	5050	outside gene and distance to nearest gene up/downstream>400				
+A6	chr1	14650	14700	outside gene and distance to nearest gene upstream<400				
+A7	1	20000	20050	outside gene and distance to nearest gene upstream>400				
+A8	chr1	1900	1990	promoter only	1	ENSBTAG00000000001	0	promoter
+A9	1	1990	2010	promoter and tss	1	ENSBTAG00000000001	0	tss
+A9	1	1990	2010	promoter and tss	2	ENSBTAG00000000001	0	promoter
+A10	1	2250	2260	special case : there is only a gene feature (no exon feature) should output gene_id	1	ENSBTAG00000000001	0	gene
+A11	chr1	2001	2050	tss only	1	ENSBTAG00000000001	0	tss
+B1	2	1950	1960	outside forward gene but promoter should match	1	ENSBTAG00000000004	0	promoter
+B2	chr2	1990	2001	outside forward gene but promoter and tss should match	1	ENSBTAG00000000004	0	tss
+B2	chr2	1990	2001	outside forward gene but promoter and tss should match	2	ENSBTAG00000000004	0	promoter
+B3	2	2005	2015	inside forward gene ; tss only	1	ENSBTAG00000000004	0	tss
+B3	2	3005	3020	outside forward gene but tts should match	1	ENSBTAG00000000004	0	tts
+B4	2	6050	6060	outside reverse gene but promoter should match	1	ENSBTAG00000000005	0	promoter
+B5	chr2	5999	6010	outside reverse gene but promoter and tss should match	1	ENSBTAG00000000005	0	tss
+B5	chr2	5999	6010	outside reverse gene but promoter and tss should match	2	ENSBTAG00000000005	0	promoter
+B6	2	5990	5999	inside reverse gene ; tss only	1	ENSBTAG00000000005	0	tss
+B7	2	4985	4995	outside reverse gene but tts should match	1	ENSBTAG00000000005	0	tts
+C1	3	1000	1001	In promoter,tss,exon (gene ENS.6)	1	ENSBTAG00000000006	0	exon
+C1	3	1000	1001	In promoter,tss,exon (gene ENS.6)	2	ENSBTAG00000000006	0	tss
+C1	3	1000	1001	In promoter,tss,exon (gene ENS.6)	3	ENSBTAG00000000006	0	promoter
+C2	chr3	1399	1400	In tts,exon (gene ENS.6)	1	ENSBTAG00000000006	0	exon
+C2	chr3	1399	1400	In tts,exon (gene ENS.6)	2	ENSBTAG00000000006	0	tts
+C3	3	1500	1501	In tts, exon (gene ENS.7)	1	ENSBTAG00000000007	0	exon
+C3	3	1500	1501	In tts, exon (gene ENS.7)	2	ENSBTAG00000000007	0	tts
+C4	chr3	1889	1890	In promoter,tss,exon (gene ENS.7)	1	ENSBTAG00000000007	0	exon
+C4	chr3	1889	1890	In promoter,tss,exon (gene ENS.7)	2	ENSBTAG00000000007	0	tss
+C4	chr3	1889	1890	In promoter,tss,exon (gene ENS.7)	3	ENSBTAG00000000007	0	promoter
+C5	3	2000	2001	In promoter,exon,tss (gene ENS.8)	1	ENSBTAG00000000008	0	exon
+C5	3	2000	2001	In promoter,exon,tss (gene ENS.8)	2	ENSBTAG00000000008	0	tss
+C5	3	2000	2001	In promoter,exon,tss (gene ENS.8)	3	ENSBTAG00000000008	0	promoter
+C6	chr3	2399	2400	In exon,tts (gene ENS.8)	1	ENSBTAG00000000008	0	exon
+C6	chr3	2399	2400	In exon,tts (gene ENS.8)	2	ENSBTAG00000000008	0	tts
+C7	3	2500	2501	In exon,tts (gene ENS.9)	1	ENSBTAG00000000009	0	exon
+C7	3	2500	2501	In exon,tts (gene ENS.9)	2	ENSBTAG00000000009	0	tts
+C8	chr3	2889	2890	In exon,tss,promoter (gene ENS.9)	1	ENSBTAG00000000009	0	exon
+C8	chr3	2889	2890	In exon,tss,promoter (gene ENS.9)	2	ENSBTAG00000000009	0	tss
+C8	chr3	2889	2890	In exon,tss,promoter (gene ENS.9)	3	ENSBTAG00000000009	0	promoter
+C13	chr3	4025	4026	in utr5 (gene ENS.12)	1	ENSBTAG00000000012	0	utr5
+C14	3	4055	4056	in utr5 (gene ENS.12)	1	ENSBTAG00000000012	0	utr5
+C15	chr3	4105	4106	in exon (gene ENS.12)	1	ENSBTAG00000000012	0	exon
+C16	3	4175	4176	in intron (gene ENS.12)	1	ENSBTAG00000000012	0	intron
+C17	chr3	4225	4226	in exon (gene ENS.12)	1	ENSBTAG00000000012	0	exon
+C18	3	4260	4261	in intron (gene ENS.12)	1	ENSBTAG00000000012	0	intron
+C19	chr3	4270	4271	in exon (gene ENS.12)	1	ENSBTAG00000000012	0	exon
+C20	3	4310	4311	in utr3 (gene ENS.12)	1	ENSBTAG00000000012	0	utr3
+C21	chr3	4350	4351	in utr3 (gene ENS.12)	1	ENSBTAG00000000012	0	utr3
+C13	chr3	4625	4626	in utr3 (gene ENS.13)	1	ENSBTAG00000000013	0	utr3
+C14	3	4655	4656	in utr3 (gene ENS.13)	1	ENSBTAG00000000013	0	utr3
+C15	chr3	4705	4706	in exon (gene ENS.13)	1	ENSBTAG00000000013	0	exon
+C16	3	4725	4726	in intron (gene ENS.13)	1	ENSBTAG00000000013	0	intron
+C17	chr3	4775	4776	in exon (gene ENS.13)	1	ENSBTAG00000000013	0	exon
+C18	3	4825	4826	in intron (gene ENS.13)	1	ENSBTAG00000000013	0	intron
+C19	chr3	4875	4876	in exon (gene ENS.13)	1	ENSBTAG00000000013	0	exon
+C20	3	4910	4911	in utr5 (gene ENS.13)	1	ENSBTAG00000000013	0	utr5
+C21	chr3	4950	4951	in utr5 (gene ENS.13)	1	ENSBTAG00000000013	0	utr5
+C13	chr4	4025	4026	in utr5 (gene ENS.14)	1	ENSBTAG00000000014	0	utr5
+C14	4	4055	4056	in utr5 (gene ENS.14)	1	ENSBTAG00000000014	0	utr5
+C15	chr4	4105	4106	in exon (gene ENS.14)	1	ENSBTAG00000000014	0	exon
+C16	4	4175	4176	in intron (gene ENS.14)	1	ENSBTAG00000000014	0	intron
+C17	chr4	4225	4226	in exon (gene ENS.14)	1	ENSBTAG00000000014	0	exon
+C18	4	4260	4261	in intron (gene ENS.14)	1	ENSBTAG00000000014	0	intron
+C19	chr4	4270	4271	in exon (gene ENS.14)	1	ENSBTAG00000000014	0	exon
+C20	4	4310	4311	in utr3 (gene ENS.14)	1	ENSBTAG00000000014	0	utr3
+C21	chr4	4350	4351	in utr3 (gene ENS.14)	1	ENSBTAG00000000014	0	utr3
+C13	chr4	4625	4626	in utr3 (gene ENS.15)	1	ENSBTAG00000000015	0	utr3
+C14	4	4655	4656	in utr3 (gene ENS.15)	1	ENSBTAG00000000015	0	utr3
+C15	chr4	4705	4706	in exon (gene ENS.15)	1	ENSBTAG00000000015	0	exon
+C16	4	4725	4726	in intron (gene ENS.15)	1	ENSBTAG00000000015	0	intron
+C17	chr4	4775	4776	in exon (gene ENS.15)	1	ENSBTAG00000000015	0	exon
+C18	4	4825	4826	in intron (gene ENS.15)	1	ENSBTAG00000000015	0	intron
+C19	chr4	4875	4876	in exon (gene ENS.15)	1	ENSBTAG00000000015	0	exon
+C20	4	4910	4911	in utr5 (gene ENS.15)	1	ENSBTAG00000000015	0	utr5
+C21	chr4	4950	4951	in utr5 (gene ENS.15)	1	ENSBTAG00000000015	0	utr5
+C22	4	10000	10100	Fails to match (no gene after)				
+C22	chr4	100	200	Fails to match (no gene before)				
+X1	chrX	1500	1600	In enhancer related to a known gene				
+X2	chrX	3500	3600	In enhancer related to an unknown gene	1	ENSBTAG00000099999	0	enhancer
+X3	chrX	5500	5600	In enhancer related to no gene	1		0	enhancer
+X4	chrX	10000	10100	Fails to match				
+Y1	chrY	100	110	No feature defined for chromosome Y in gtf	1			

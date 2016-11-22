@@ -1,0 +1,73 @@
+Info1	Chromosome	Position	Comment
+A1	chr1	100	outside gene and distance to nearest gene downstream>400
+A2	1	1690	outside gene and distance to nearest gene downstream<400
+A3	chr1	2600	outside gene and distance to nearest gene upstream<400
+A4	chr1	2800	outside gene and distance to nearest gene downstream<400
+A5	1	5000	outside gene and distance to nearest gene up/downstream>400
+A6	chr1	14650	outside gene and distance to nearest gene upstream<400
+A7	1	20000	outside gene and distance to nearest gene upstream>400
+A8	chr1	1900	promoter only
+A9	1	2000	promoter and tss
+A10	chr1	2250	special case : there is only a gene feature (no exon feature) should output gene_id
+A11	chr1	2001	tss only
+B1	2	1950	outside forward gene but promoter should match
+B2	chr2	2000	outside forward gene but promoter and tss should match
+B3	2	2005	inside forward gene ; tss only
+B3	2	3005	outside forward gene but tts should match
+B4	2	6050	outside reverse gene but promoter should match
+B5	chr2	5999	outside reverse gene but promoter and tss should match
+B6	2	5990	inside reverse gene ; tss only
+B7	2	4995	outside reverse gene but tts should match
+C1	3	1000	In promoter,tss,exon (gene ENS.6)
+C2	chr3	1399	In tts,exon (gene ENS.6)
+C3	3	1500	In tts, exon (gene ENS.7)
+C4	chr3	1889	In promoter,tss,exon (gene ENS.7)
+C5	3	2000	In promoter,exon,tss (gene ENS.8)
+C6	chr3	2399	In exon,tts (gene ENS.8)
+C7	3	2500	In exon,tts (gene ENS.9)
+C8	chr3	2889	In exon,tss,promoter (gene ENS.9)
+C13	chr3	4025	in utr5 (gene ENS.12)
+C14	3	4055	in utr5 (gene ENS.12)
+C15	chr3	4105	in exon (gene ENS.12)
+C16	3	4175	in intron (gene ENS.12)
+C17	chr3	4225	in exon (gene ENS.12)
+C18	3	4260	in intron (gene ENS.12)
+C19	chr3	4270	in exon (gene ENS.12)
+C20	3	4310	in utr3 (gene ENS.12)
+C21	chr3	4350	in utr3 (gene ENS.12)
+C13	chr3	4625	in utr3 (gene ENS.13)
+C14	3	4655	in utr3 (gene ENS.13)
+C15	chr3	4705	in exon (gene ENS.13)
+C16	3	4725	in intron (gene ENS.13)
+C17	chr3	4775	in exon (gene ENS.13)
+C18	3	4825	in intron (gene ENS.13)
+C19	chr3	4875	in exon (gene ENS.13)
+C20	3	4910	in utr5 (gene ENS.13)
+C21	chr3	4950	in utr5 (gene ENS.13)
+C13	chr4	4025	in utr5 (gene ENS.14)
+C14	4	4055	in utr5 (gene ENS.14)
+C15	chr4	4105	in exon (gene ENS.14)
+C16	4	4175	in intron (gene ENS.14)
+C17	chr4	4225	in exon (gene ENS.14)
+C18	4	4260	in intron (gene ENS.14)
+C19	chr4	4270	in exon (gene ENS.14)
+C20	4	4310	in utr3 (gene ENS.14)
+C21	chr4	4350	in utr3 (gene ENS.14)
+C13	chr4	4625	in utr3 (gene ENS.15)
+C14	4	4655	in utr3 (gene ENS.15)
+C15	chr4	4705	in exon (gene ENS.15)
+C16	4	4725	in intron (gene ENS.15)
+C17	chr4	4775	in exon (gene ENS.15)
+C18	4	4825	in intron (gene ENS.15)
+C19	chr4	4875	in exon (gene ENS.15)
+C20	4	4910	in utr5 (gene ENS.15)
+C21	chr4	4950	in utr5 (gene ENS.15)
+C22	4	10000	Fails to match (no gene after)
+C22	chr4	100	Fails to match (no gene before)
+S1	Scaffold1	100	scaffold1 defined in gtf file
+S2	Scaffold2	100	scaffold2 not defined in gtf file
+X1	chrX	1500	In enhancer related to a known gene
+X2	chrX	3500	In enhancer related to an unknown gene
+X3	chrX	5500	In enhancer related to no gene
+X4	chrX	10000	Fails to match
+Y1	chrY	100	No feature defined for chromosome Y in gtf

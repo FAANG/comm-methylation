@@ -1,0 +1,28 @@
+#Example of configuration file when no replicates are available.
+#
+#Without replicates within condition, you cannot use methylSig or methylKit
+#analysis.
+#
+#You start differential analysis from the detection of obvious DMCs step
+#
+#
+#Global parameters:
+#----------------------
+#title	Condition A vs B
+#output_dir	./out_nostats
+#
+#Obvious DMCs parameters:
+#------------------------
+#min_coverage2	10
+#max_coverage2	500
+#methdiff_threshold2	1
+#
+#DMCs -> DMRs parameters:
+#------------------------
+#nb_min_DMCs_in_DMRs	3
+#max_distance_between_DMCs	100
+#stat_threshold2	0.05
+#
+Sample	File	Condition
+A1	data/A1_syntheseCpG_chr1.txt	Condition_A
+B1	data/B1_syntheseCpG_chr1.txt	Condition_B

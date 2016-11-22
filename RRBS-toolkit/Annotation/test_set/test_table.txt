@@ -1,0 +1,14 @@
+config_file     object
+config_input1_for_position1.txt Testing basic join by position (region)
+config_input2_for_position1.txt	Testing join by position with min_overlap=1%
+config_input1_for_position2.txt	Testing join by position with min_overlap=50%
+config_input2_for_position2.txt	Testing join by position with nb_max_results=2
+config_input3_for_position1.txt Testing basic join by position (position)
+config_input3_for_position2.txt Testing with interval_shifts
+config_tab1_for_gtf_test.txt	Testing basic join with gtf
+config_tab2_for_gtf_test.txt	Testing gtf join with max_dist_nearest_gene and promoter, tss, tts upstream/down stream non default values
+config_tab3_for_gtf_test.txt	Testing gtf join with target location specified as a position
+config_tab4_for_gtf_test.txt	Testing gtf with non default feature_priorities default value
+config_tab5_for_gtf_test.txt	Testing gtf join with nb_max_results=1
+config_input3_for_position3_no_tolerance.txt	Testing if target and reference files refer to genomic position (no tolerance)
+config_input3_for_position3_with_tolerance.txt	Testing if target and reference files refer to genomic position (with 1kb tolerance)

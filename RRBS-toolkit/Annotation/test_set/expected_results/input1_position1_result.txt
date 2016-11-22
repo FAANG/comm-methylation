@@ -1,0 +1,18 @@
+Info tgt 1	Chromosome	Start	End	Info tgt 2	# overlap	Test position region	% target overlapping	% reference overlapping	Info ref 1	Info ref 2
+A1	chr1	100	200	No match						
+A2	1	501	1000	Match only if min_overlap=0 (% target overlap=1/500)	1	1:1000-1500	0.20%	0.20%	A1	toto
+A3	chr1	901	1000	Match only if min_overlap>=1% (% target overlap=1/100)	1	1:1000-1500	1.00%	0.20%	A1	toto
+A4	chr1	999	1000	Match only if min_overlap>=50% (% target overlap=1/2)	1	1:1000-1500	50.00%	0.20%	A1	toto
+A5	1	990	1010	Match only if min_overlap>=50% (% target overlap=10/20)	1	1:1000-1500	52.38%	2.20%	A1	toto
+A6	chr1	1000	1000	Match always (% target overlap = 1/1)	1	1:1000-1500	100.00%	0.20%	A1	toto
+A7	1	100	1250	Match only if min_overlap>=50% (% reference overlap=1/2)	1	1:1000-1500	21.81%	50.10%	A1	toto
+A8	1	100	1500	Match always (% reference overlap=100%)	1	1:1000-1500	35.76%	100.00%	A1	toto
+B1	chr2	1000	2000	test ordering : [1000;1500] should be first	1	2:1000-1500	50.05%	100.00%	B1	titi
+B1	chr2	1000	2000	test ordering : [1000;1500] should be first	2	2:1600-2000	40.06%	100.00%	B2	tutu
+B2	2	1400	1701	test ordering : [1600;2000] should be first	1	2:1600-2000	33.77%	25.44%	B2	tutu
+B2	2	1400	1701	test ordering : [1600;2000] should be first	2	2:1000-1500	33.44%	20.16%	B1	titi
+B3	chr3	1300	1600	test ordering : [1450;1550] then [1200;1800] then [1000;2000]	1	3:1200-1800	100.00%	50.08%	B4	foo
+B3	chr3	1300	1600	test ordering : [1450;1550] then [1200;1800] then [1000;2000]	2	3:1000-2000	100.00%	30.07%	B5	bar
+B3	chr3	1300	1600	test ordering : [1450;1550] then [1200;1800] then [1000;2000]	3	3:1450-1550	33.55%	100.00%	B3	tata
+B4	3	1000	1220	test ordering : [1000;2000] then [1200;1800]	1	3:1000-2000	100.00%	22.08%	B5	bar
+B4	3	1000	1220	test ordering : [1000;2000] then [1200;1800]	2	3:1200-1800	9.50%	3.49%	B4	foo

@@ -1,0 +1,18 @@
+#Global parameters:
+#----------------------
+#title	ConditionA_vs_ConditionB
+#output_dir	./out
+#
+#min_samples_per_condition	2
+#min_coverage	10
+#max_coverage	500
+#output_table_file	aggregated_methylation_results.txt
+#produce_hclust	Yes
+#produce_pca	Yes
+#pca_scaling	Yes
+#sampling_factor	0.9
+Sample	File	Condition	Colour
+A1	../Differential_analysis/analysis_examples/data/A1_syntheseCpG_chr1.txt	Condition_A	blue
+A2	../Differential_analysis/analysis_examples/data/A2_syntheseCpG_chr1.txt	Condition_A	blue
+B1	../Differential_analysis/analysis_examples/data/B1_syntheseCpG_chr1.txt	Condition_B	red
+B2	../Differential_analysis/analysis_examples/data/B2_syntheseCpG_chr1.txt	Condition_B	red

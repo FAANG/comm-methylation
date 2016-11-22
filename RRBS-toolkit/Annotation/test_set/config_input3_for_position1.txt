@@ -1,0 +1,12 @@
+file_to_annotate		test_set/input3_tab_for_position_test.txt
+file_format			tab
+output_file			temp_tests/input3_position1_result.txt
+keep_scaffolds			Yes
+
+theme				Test position
+	join_type		location
+	reference_file		test_set/reference_position1.txt
+	nb_max_results		All
+	target_keys		2,3
+	reference_keys		2,3,4
+

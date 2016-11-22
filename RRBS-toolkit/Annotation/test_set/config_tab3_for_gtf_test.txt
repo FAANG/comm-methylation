@@ -1,0 +1,18 @@
+file_to_annotate		test_set/input_tab3_for_gtf_test.txt
+file_format			tab
+output_file			temp_tests/test_gtf_result3.txt
+keep_scaffolds			Yes
+
+theme				Gene features
+	join_type		gtf
+	reference_file		test_set/reference_test.gtf
+	nb_max_results		All
+	target_keys		2,3
+	max_dist_nearest_gene	400
+	promoter_upstream	100
+	promoter_downstream	0
+	tss_upstream		0
+	tss_downstream		10
+	tts_upstream		10
+	tts_downstream		10
+

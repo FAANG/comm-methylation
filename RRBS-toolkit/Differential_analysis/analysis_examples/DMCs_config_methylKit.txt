@@ -1,0 +1,34 @@
+#Example of configuration file for methylKit analysis
+#
+#
+#Global parameters:
+#----------------------
+#title	Condition A vs B
+#output_dir	./out_methylKit
+#
+#MethylSig/Kit parameters:
+#-------------------------
+#stat_method	methylKit
+#min_coverage1	10
+#max_coverage1	500
+#stat_value	pvalue
+#stat_threshold1	0.01
+#methdiff_threshold1	0.25
+#
+#Obvious DMCs parameters:
+#------------------------
+#min_coverage2	10
+#max_coverage2	500
+#methdiff_threshold2	1
+#
+#DMCs -> DMRs parameters:
+#------------------------
+#nb_min_DMCs_in_DMRs	3
+#max_distance_between_DMCs	100
+#stat_threshold2	0.05
+#
+Sample	File	Condition
+A1	data/A1_syntheseCpG_chr1.txt	Condition_A
+A2	data/A2_syntheseCpG_chr1.txt	Condition_A
+B1	data/B1_syntheseCpG_chr1.txt	Condition_B
+B2	data/B2_syntheseCpG_chr1.txt	Condition_B

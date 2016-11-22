@@ -1,0 +1,9 @@
+CMD get_DMRs.py
+	Configuration file :
+	--------------------
+		min_DMCs=3
+		max_distance=100
+		output_dir=./out_DMR_only
+RESULT Number of DMRs identified=733
+RESULT Number of extended DMRs identified=733
+STATUS OK

@@ -1,0 +1,10 @@
+Info1	Chromosome	Position	Info2	# overlap	Test position region	Info1	Info2
+A1	chr4	1500	should match with [1000;2000]	1	4:1510-1511	A1	No match if no interval shift
+A1	chr4	1500	should match with [1000;2000]	2	4:1910-1911	A2	Always match
+A2	4	1910	[1900;2000] should be first then [1000;2000]	1	4:1910-1911	A2	Always match
+A2	4	1910	[1900;2000] should be first then [1000;2000]	2	4:1510-1511	A1	No match if no interval shift
+A3	chr4	4000	[5000;6000] only match if interval_shift>=1000	1	4:3500-3501	A1	No match if no interval shift
+A3	chr4	4000	[5000;6000] only match if interval_shift>=1000	2	4:4500-4501	A1	No match if no interval shift
+A4	4	11000	[5000;6000] only match if interval_shift>=5000				
+A5	chr4	15000	[5000;6000] only match if interval_shift>=10000				
+A6	4	30000	never match	1	4:30000-30001	A6	never match
