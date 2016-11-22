@@ -46,5 +46,13 @@ It integrates several external tools :
 
 All these tools should be installed before to use RRBS toolkit.
 
-Once all these prerequisites are satisfied, you should edit file **RRBS_HOME/config.sh** and change the path to these external tools (**RRBS_HOME** referes to the path where RRBS toolkit is installed).
+Once all these prerequisites are satisfied, you should edit file **RRBS_HOME/config.sh** and change the path to these external tools (**RRBS_HOME** refers to the path where RRBS toolkit is installed).
+
+If you plan to launch your treatment on a cluster (using, by instance, **qsub** SGE command), you should define environment variable **RRBS_HOME** :
+```shell
+export RRBS_HOME=/path_to_the_directory/where/RRBS_toolkit/has/been/installed
+```
+
+(you can place this line of shell script in your file $HOME/.profile).
+
 
