@@ -1,13 +1,46 @@
 #!/bin/sh
 #$ -l mem=10G
 #$ -l h_vmem=20G
+#
+# Copyright (C) 2016 INRA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#----------------------------------------------------------------------
+#authors :
+#---------
+#	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
+#	Jouneau Luc (luc.jouneau@inra.fr)		software conception and development (engineer in bioinformatics)
+#	Gasselin Maxime (m.gasselin@hotmail.fr)		software user and data analysis (PhD student in Epigenetics)
+#	Perrier Jean-Philippe (jp.perrier@hotmail.fr)	software user and data analysis (PhD student in Epigenetics)
+#	Al Adhami Hala (hala_adhami@hotmail.com)	software user and data analysis (postdoctoral researcher in Epigenetics)
+#	Jammes Helene (helene.jammes@inra.fr)		software user and data analysis (research group leader in Epigenetics)
+#	Kiefer Helene (helene.kiefer@inra.fr)		software user and data analysis (principal invertigator in Epigenetics)
+#
 
 # usage :
 # ../Scripts/BioInformatics/RR_genome_in_silico.sh <path to genome file> <recognition_sequence> <min_fragment_size> <max_fragment_size> <if_chromosomes_scaffolds_must_be_treated>
 
-RR_GENOME_HOME=`dirname $0`
-.  $RR_GENOME_HOME/../config.sh
-
+if [ "$RRBS_HOME" = "" ]
+then
+	#Try to find RRBS_HOME according to the way the script is launched
+	RR_GENOME_HOME=`dirname $0`
+else
+	#Use RRBS_HOME as defined in environment variable
+	RR_GENOME_HOME="$RRBS_HOME/RR_genome"
+fi
+. $RR_GENOME_HOME/../config.sh
 
 ##########
 # Test if genome file is present
@@ -96,7 +129,6 @@ if_chromosomes_scaffolds_must_be_treated=$5
 
 (
 
-
 ######### in silico DNA digestion
 $PYTHON_EXECUTE $RR_GENOME_HOME/RR_genome_digestion.py $file $recognition_sequence $min_fragment_size $max_fragment_size $if_chromosomes_scaffolds_must_be_treated
 
@@ -119,7 +151,7 @@ fi
 #output_file_from_dig_genome=$file_without_suffix"_frag_in_silico_"$recognition_sequence"_"$min_fragment_size"_"$max_fragment_size".fasta"
 
 ##### in silico RR genome parameters
-$PYTHON_EXECUTE $RR_GENOME_HOME/RR_genome_parameters.py $new2 $recognition_sequence
+$PYTHON_EXECUTE $RR_GENOME_HOME/RR_genome_parameters.py $new2 $file $recognition_sequence
 
 if [ $? -ne 0 ]
 then

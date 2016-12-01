@@ -1,3 +1,30 @@
+#
+# Copyright (C) 2016 INRA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+#----------------------------------------------------------------------
+#authors :
+#---------
+#	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
+#	Jouneau Luc (luc.jouneau@inra.fr)		software conception and development (engineer in bioinformatics)
+#	Gasselin Maxime (m.gasselin@hotmail.fr)		software user and data analysis (PhD student in Epigenetics)
+#	Perrier Jean-Philippe (jp.perrier@hotmail.fr)	software user and data analysis (PhD student in Epigenetics)
+#	Al Adhami Hala (hala_adhami@hotmail.com)	software user and data analysis (postdoctoral researcher in Epigenetics)
+#	Jammes Helene (helene.jammes@inra.fr)		software user and data analysis (research group leader in Epigenetics)
+#	Kiefer Helene (helene.kiefer@inra.fr)		software user and data analysis (principal invertigator in Epigenetics)
+#
 
 """
 
@@ -25,25 +52,30 @@ import sys
 import re
 import os, stat
 
-#########
-debug = 1
-#########
 
-######## FUNCTIONS
-def counts(sequence, rest_site, CG_nb, fragments_number, RR_genome_size):
+
+def counts(filetype,sequence, rest_site, CG_nb, fragments_number, RR_genome_size):
+
+	# bases are added at the end of fragments in RR_genomes and must be removed in RR_genome only ! 
+	# in order to correctly count the CG number
+	# not in genome files
+	if filetype != 'genome':
+		#print filetype
 
 	# remove added bases
-	if rest_site == "CCGG":
-		if re.search('CG$', sequence):
-			sequence = sequence[:-2]
+		if rest_site == "CCGG":
+			if re.search('CG$', sequence):
+				sequence = sequence[:-2]
 
-	elif rest_site == "CCCGGG":
-		if re.search('CCGG$', sequence):
-			sequence = sequence[:-4]
+		elif rest_site == "CCCGGG":
+			if re.search('CCGG$', sequence):
+				sequence = sequence[:-4]
 
-	elif rest_site == "CACGAG":
-		if re.search('ACGA$', sequence):
-			sequence = sequence[:-4]
+		elif rest_site == "CACGAG":
+			if re.search('ACGA$', sequence):
+				sequence = sequence[:-4]
+
+
 					
 	# CG number
 	nom = re.compile(r'CG')
@@ -60,60 +92,33 @@ def counts(sequence, rest_site, CG_nb, fragments_number, RR_genome_size):
 	return CG_nb, fragments_number, RR_genome_size
 
 
+def genome_parameters(filename_with_path):
 
-######## VARIABLES
-# rabbit genome data:		
-genome_size = {
-	"rabbit":	2737490501.0,
-	"bovine":	2670422299.0,
-	"pig":		2808525831.0,
-	"mouse":	1.0,
-	"test":         1.0
-}
-genome_CG_number = {
-	"rabbit":	36000387.0,
-	"bovine":	27540367.0,
-	"pig":		30460432.0,
-	"mouse":	1.0,
-	"test":         1.0
-}
+	sequence =''
+	fragments_number = 0
+	CG_total_nb = 0
+	fragments_total_number = 0
+	RR_genome_total_size = 0
 
-sequence =''
-RR_genome_size = 0
-RR_genome_total_size = 0
-fragments_number = 0
-fragments_total_number = 0
-CG_nb = 0
-CG_total_nb = 0
+	RR_genome_size = 0
+	fragments_number = 0
+	CG_nb = 0
 
 
+	if filename_with_path == argv[2]:
+		filetype = 'genome'
+	else:
+		filetype = 'RR_genome'
+	
 
-######## 
-filename = argv[1] 
-rest_site = argv[2]
-
-pattern = re.search("\.\./Genomes/([a-zA-Z0-9_]+)/[a-zA-Z0-9._]+.fa[s]?[t]?[a]?$",filename)
-
-if pattern:
-	genome_name = pattern.group(1)
-else:
-	print "species not defined!!!"
-
-genome_name = genome_name.lower()
-
-if genome_name == "rabbit" or genome_name == "bovine" or genome_name == "pig" or genome_name == "test" or genome_name == "mouse":
-
-	ifh = open(filename)
-	output_file = filename + "_results" + ".txt"
-
-	ofh = open(output_file, "w")   
+	ifh = open(filename_with_path)
 
 	for line in ifh:
 		line = line.rstrip('\r\n')
 		if line.startswith('>'):
 			if sequence !='':
 
-				values = counts(sequence, rest_site, CG_nb, fragments_number, RR_genome_size)
+				values = counts(filetype,sequence, rest_site, CG_nb, fragments_number, RR_genome_size)
 				CG_total_nb = values[0] + CG_total_nb
 				fragments_total_number = values[1] + fragments_total_number
 				RR_genome_total_size = values[2] + RR_genome_total_size
@@ -132,43 +137,51 @@ if genome_name == "rabbit" or genome_name == "bovine" or genome_name == "pig" or
 
 	if sequence !='':
 	
-		values = counts(sequence, rest_site, CG_nb, fragments_number, RR_genome_size)
+		values = counts(filetype,sequence, rest_site, CG_nb, fragments_number, RR_genome_size)
 		CG_total_nb = values[0] + CG_total_nb
 		fragments_total_number = values[1] + fragments_total_number
 		RR_genome_total_size = values[2] + RR_genome_total_size
 
-		if debug == 0:
-			print "RR_genome_size : ",RR_genome_total_size
 
 		# total fragment number
 		fragments_number = fragments_number + 1
 
-		if debug == 0:
-			print "fragments_number : ",fragments_total_number
-
-		#output file title line
-		ofh.write("Sample"+'\t'+"RR genome size"+'\t'+"% of whole genome"+'\t'+"number of fragments"+'\t'+"number of CpG sites (RR genome)"+'\t'+"% of total genomic CpG sites"+'\n')
-
-		ofh.write(filename+'\t'+str(RR_genome_total_size)+'\t')
-
-
-	pct_whole_genome = (RR_genome_total_size/genome_size[genome_name])*100
-	pct_CG_whole_genome = (CG_total_nb/genome_CG_number[genome_name])*100
-
-	pct_whole_genome = round(pct_whole_genome,1)
-	pct_CG_whole_genome = round(pct_CG_whole_genome,1)
-
-	ofh.write(str(pct_whole_genome)+'\t'+ str(fragments_total_number)+'\t'+ str(CG_total_nb) +'\t'+ str(pct_CG_whole_genome) +'\n')
-
+	
 	ifh.close()
-	ofh.close()
 
 
-else :
-	print "Species must be 'rabbit', 'bovine', 'mouse' or 'pig'"
-	sys.exit(1)
+	return RR_genome_total_size, CG_total_nb,fragments_total_number
 
 
 
+filename_with_path = argv[1] 
+genome_with_path = argv[2]
+rest_site = argv[3]
+
+
+
+RR_genome_total_size,CG_total_nb,fragments_total_number = genome_parameters(filename_with_path)
+
+genome_total_size,genome_CG_number,chromosomes_total_number = genome_parameters(genome_with_path)
+
+
+output_file = os.path.basename(filename_with_path) + "_results" + ".txt"
+ofh = open(output_file, "w")  
+ofh.write("Sample"+'\t'+"RR genome size"+'\t'+"% of whole genome"+'\t'+"number of fragments"+'\t'+"number of CpG sites (RR genome)"+'\t'+"% of total genomic CpG sites"+'\n')
+
+ofh.write(os.path.basename(filename_with_path)+'\t'+str(RR_genome_total_size)+'\t')
+
+
+
+
+pct_whole_genome = (RR_genome_total_size/float(genome_total_size))*100
+pct_CG_whole_genome = (CG_total_nb/float(genome_CG_number))*100
+
+pct_whole_genome = round(pct_whole_genome,1)
+pct_CG_whole_genome = round(pct_CG_whole_genome,1)
+
+ofh.write(str(pct_whole_genome)+'\t'+ str(fragments_total_number)+'\t'+ str(CG_total_nb) +'\t'+ str(pct_CG_whole_genome) +'\n')
+
+ofh.close()
 
 

@@ -1,20 +1,31 @@
 #
 # Copyright (C) 2016 INRA
-#
+# 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Authors : francois.piumi@jouy.inra.fr, luc.jouneau@jouy.inra.fr, 
+#----------------------------------------------------------------------
+#authors :
+#---------
+#	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
+#	Jouneau Luc (luc.jouneau@inra.fr)		software conception and development (engineer in bioinformatics)
+#	Gasselin Maxime (m.gasselin@hotmail.fr)		software user and data analysis (PhD student in Epigenetics)
+#	Perrier Jean-Philippe (jp.perrier@hotmail.fr)	software user and data analysis (PhD student in Epigenetics)
+#	Al Adhami Hala (hala_adhami@hotmail.com)	software user and data analysis (postdoctoral researcher in Epigenetics)
+#	Jammes Helene (helene.jammes@inra.fr)		software user and data analysis (research group leader in Epigenetics)
+#	Kiefer Helene (helene.kiefer@inra.fr)		software user and data analysis (principal invertigator in Epigenetics)
+#
+
 """
 Produce a Reduced Representation genome from fasta file genome . The sequence is cut into fragments according to the given restriction enzyme recognition sequence : This sequence is always cleaved just after the 5prime first base towards 3prime and just before the last base on the complementary strand
 
@@ -61,7 +72,7 @@ def cut_seq(sequence,rest_enz,fragment_number,empty_fragments):
 
 	for idx in range(0,len(coupage_seq)):
 		# fragment count incremented
-		fragment_number = fragment_number + 1
+		####fragment_number = fragment_number + 1
 		current_frag = coupage_seq[idx] 
 
 		if current_frag == '':
@@ -97,7 +108,7 @@ def cut_seq(sequence,rest_enz,fragment_number,empty_fragments):
 
 			if sel_last_frag == 1:
 				ofh.write(chromosome +'\t'+ str(start_frag) + '\t'+ str(end_frag) + '\t'+ last_frag + '\n')
-				
+				fragment_number = fragment_number + 1
 				# End if sel_last_frag == 1:
 			# End if not first fragment:
 
@@ -112,6 +123,7 @@ def cut_seq(sequence,rest_enz,fragment_number,empty_fragments):
 	# END for idx in........
 	if sel_last_frag:
 		ofh.write(chromosome +'\t'+ str(start_frag) + '\t'+ str(end_frag) + '\t'+ last_frag +'\n')
+		fragment_number = fragment_number + 1
 	return fragment_number, empty_fragments
 
 
@@ -206,8 +218,6 @@ for line in ifh:
 			Fragment_total_number = Fragment_total_number + output_var_from_cut_seq_function[0]
 			empty_fragments_total_number = empty_fragments_total_number + output_var_from_cut_seq_function[1]
 
-		# If sequence is empty chromosome name is entered into the chromosome variable
-
 		line = line.split()
 
 		chromosome = line[0]
@@ -277,7 +287,7 @@ for line in file_1:
 
 file_1.close()
 
-print locations
+#print locations
 
 def sortChromosomeAndStart_V2(keyLoc1, keyLoc2):
 
