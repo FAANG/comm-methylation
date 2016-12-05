@@ -41,6 +41,7 @@ min_coverage=10;
 max_coverage=-1;
 pct_threshold=100;
 output_dir=".";
+title=""
 
 if not os.path.isfile(config_file) :
 	sys.exit("Unable to find configuration file for getObviousDMCs : '"+config_file+"'")
@@ -74,6 +75,10 @@ try :
 		me=re.match("^#output_dir\t([^#]*)(#.*)?$",line)
 		if me is not None:
 			output_dir=me.group(1)
+			continue
+		me=re.match("^#title\t([^#]*)(#.*)?$",line)
+		if me is not None:
+			title=me.group(1)
 			continue
 		if re.match("^Sample\t.*$",line):
 			state=1
@@ -215,11 +220,12 @@ try :
 		final[chr][start]=avg_occurrences_C[reference_cond]-avg_occurrences_C[alternative_cond]
 
 	#Output
+	if title== "" :
+		title=",".join(cond2samples[reference_cond].split("\t")) + "_" + \
+		      ",".join(cond2samples[alternative_cond].split("\t"))
+
 	txt_out=output_dir+"/obvious_DMCs_"+ \
-		(",".join(cond2samples[reference_cond].split("\t")))+ \
-		"_"+ \
-		(",".join(cond2samples[alternative_cond].split("\t")))+ \
-		"_mincov"+str(min_coverage)
+		title + "_mincov"+str(min_coverage)
 
 	if max_coverage != -1 :
 		txt_out+="_maxcov"+str(max_coverage)

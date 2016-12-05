@@ -55,6 +55,14 @@ tmpFile="${configFile}.tmp123"
 cat $configFile | tr -d '\015' > $tmpFile
 mv $tmpFile $configFile
 
+#Check for mandatory parameyets
+title=`grep "^#title" $configFile | tr "[:lower:]" "[:upper:]" | sed 's/^.*\t//'`
+if [ "$title" = "" ]
+then
+	echo "You should provide a value to the 'title' parameter in your configuration file '$configFile'. Exiting."
+	exit 1
+fi
+
 outputDir=`grep "output_dir" $configFile | sed 's/^#output_dir[ \t]*//'`
 if [ "$outputDir" = "" ]
 then

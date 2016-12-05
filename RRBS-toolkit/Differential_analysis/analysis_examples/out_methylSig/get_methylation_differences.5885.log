@@ -1,0 +1,70 @@
+CMD get_diff_methyl.R
+FLAVOR methylSig
+
+	Configuration file :	DMCs_config_methylSig.txt
+	--------------------
+		min_coverage=10
+		max_coverage=500
+		local_disp=FALSE
+		group_disp=both
+		destranded=FALSE
+		stat_value=pvalue
+		stat_threshold1=0.01
+		stat_threshold2=0.05
+		methdiff_threshold1=25
+		title=Condition A vs B
+		output_dir=./out_methylSig
+		min_per_group=2
+	--------------------
+	Fri Dec  2 09:38:43 2016	Read data ...
+	Fri Dec  2 09:38:45 2016	Launch methylSig ...
+	Fri Dec  2 09:39:12 2016	Done !
+INFO number of CpGs tested by methylSig=29619
+	Fri Dec  2 09:39:13 2016	Produces output ...
+RESULT number of DMCs detected by methylSig=1608
+OUT ./out_methylSig/MethylSig - Condition A vs B - pvalue0.05.txt
+STATUS OK
+CMD rename_scaffolds.py
+FLAVOR renaming chromosome number with scaffolds
+STATUS OK
+CMD get_bed_from_methyl.py
+	Configuration file :
+	--------------------
+		stat.value=pvalue
+		stat1.threshold=0.01
+		stat2.threshold=0.05
+		output.dir=./out_methylSig
+CMD get_obvious_DMC.py
+	Configuration file :
+	--------------------
+		min_coverage2=10
+		max_coverage2=500
+		methdiff_threshold2=100.0
+	Reading A1 ...
+	Reading A2 ...
+	Reading B1 ...
+	Reading B2 ...
+RESULT number of obvious DMCs=268
+OUT ./out_methylSig/obvious_DMCs_Condition A vs B_mincov10_maxcov500_threshold100.0.txt
+STATUS OK
+CMD merge_DMCs.py
+	Configuration file :
+	--------------------
+		stat.value=pvalue
+		stat1.threshold=0.01
+		stat2.threshold=0.05
+		output.dir=./out_methylSig
+INFO number of obvious CpGs added to methylSig=124
+OUT ./out_methylSig/MethylSig - Condition A vs B - pvalue0.01 - with obvious DMCs.txt
+CMD get_DMRs.py
+	Configuration file :
+	--------------------
+		min_DMCs=3
+		max_distance=100
+		stat_value=pvalue
+		stat_threshold1=0.01
+		stat_threshold2=0.05
+		output_dir=./out_methylSig
+RESULT Number of DMRs identified=228
+RESULT Number of extended DMRs identified=222
+STATUS OK

@@ -37,9 +37,6 @@ number of CG
 
 remove the bases added by the "dig_genome_RRBS.py" script at the end of the fragment according to the used restriction enzyme. Here only Msp1, XmaC1 or BssS1 can be used.
 
-requires a genome species : rabbit, bovine and pig are available
-
-
 # Command line = ./RR_genome_parametres.py   <fragments_fasta_file.fa> <genome species> <restriction site recognition sequence ("CCGG" or "CCCGGG" or "CACGAG" or "0")>
 
 # Output file = "stats_fragments_fasta_file.txt"

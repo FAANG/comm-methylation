@@ -14,6 +14,7 @@
 #
 #Global parameters:
 #----------------------
+#title	Condition A vs B
 #output_dir	./out_DMR_only
 #
 #
