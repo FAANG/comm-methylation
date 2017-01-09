@@ -95,7 +95,7 @@ echo "Done !"
 
 #R1<->R2 distance extraction
 
-R2=`find $dir_data/trim_galore -name "*R2_val_2.fq*"`
+R2=`find $dir_data/trim_galore -name "*R2_val_2.fq*" | wc -l`
 
 if [ $R2 -eq 1 ]
 

@@ -27,7 +27,7 @@
 #
 
 #Path to the directory where RRBS pipeline is installed (directory where this configuration file is located)
-RRBS_HOME=/save/bdr-er5/RRBS_prod_2/Scripts
+RRBS_HOME=/save/bdr-er5/RRBS-toolkit
 
 #path to the directory where bismark is installed
 BISMARK_HOME=/usr/local/bioinfo/src/Bismark/current

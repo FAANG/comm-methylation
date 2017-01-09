@@ -48,6 +48,6 @@ then
 	exit 1
 fi
 
-$PYTHON_EXECUTE $RRBS_HOME/Annotation/annotk/annotk.py annotk_config_example.txt
+$PYTHON_EXECUTE $RRBS_HOME/Annotation/annotk/annotk.py "$1"
 exit $?
 

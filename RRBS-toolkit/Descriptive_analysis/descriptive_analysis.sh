@@ -33,13 +33,12 @@
 if [ "$RRBS_HOME" = "" ]
 then
 	#Try to find RRBS_HOME according to the way the script is launched
-	RRBS_PIPELINE_HOME=`dirname $0`
+	SCRIPT_DIR=`dirname $0`
 else
 	#Use RRBS_HOME as defined in environment variable
-	RRBS_PIPELINE_HOME="$RRBS_HOME/Bismark_methylation_call"
+	SCRIPT_DIR="$RRBS_HOME/Descriptive_analysis"
 fi
-. $RRBS_PIPELINE_HOME/../config.sh
-
+. $SCRIPT_DIR/../config.sh
 
 configFile=$1
 if [ ! -f "$configFile" ]

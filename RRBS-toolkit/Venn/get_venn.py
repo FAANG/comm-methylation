@@ -359,7 +359,7 @@ for key in sorted(dico_set.keys(), key=cmp_to_key(numeric_compare)):
 if args.txt_output_file is not None :
 	ofh.close() 
 
-if args.txt_output_file is None :
+if args.img_output_file is None :
 	#No Venn image requireed
 	sys.exit(0)
 
