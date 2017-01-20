@@ -1,23 +1,20 @@
 #
-#----------------------------------------------------------------
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
+# Copyright (C) 2016 INRA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-#----------------------------------------------------------------
+#----------------------------------------------------------------------
 #authors :
 #---------
 #	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
@@ -31,6 +28,7 @@
 
 import os
 import re
+import glob
 import sys
 from sys import argv
 
@@ -188,29 +186,34 @@ else:
 		except IOError as exc:
 			sys.exit("Unable to read chromosome table file '"+chr_table_file+" : {0}".format(exc))
 	
-		file_out=file_to_treat.replace(".txt",".tmp")
-		try :
-			in_file=open(file_to_treat,"rt")
-			out_file=open(file_out,"wt")
-			no_line=0
-			for line in in_file.readlines():
-				line=line.rstrip("\n")
-				no_line+=1
-				if no_line==1:
+		file_to_treat=re.sub("[pq]value[.0-9]+.txt","*.txt",file_to_treat)
+
+		files_to_treat=glob.glob(file_to_treat)
+		for file_to_treat in files_to_treat :
+			file_out=file_to_treat.replace(".txt",".tmp")
+			try :
+				in_file=open(file_to_treat,"rt")
+				out_file=open(file_out,"wt")
+				no_line=0
+				for line in in_file.readlines():
+					line=line.rstrip("\n")
+					no_line+=1
+					if no_line==1:
+						out_file.write(line+"\n")
+						continue
+					elmts=line.split("\t")
+					no_chr=elmts[0]
+					pos=elmts[1]
+	
+					if no_chr in chromosome_table:
+						elmts[0]=chromosome_table[no_chr]
+					line="\t".join(elmts);
 					out_file.write(line+"\n")
-					continue
-				elmts=line.split("\t")
-				chr=elmts[0]
-				pos=elmts[1]
-				if no_chr in chromosome_table:
-					elmts[0]=chromosome_table[no_chr]
-				line="\t".join(elmts);
-				out_file.write(line+"\n")
-			in_file.close()
-			out_file.close()
-			os.rename(file_out,file_to_treat)
-		except IOError as exc:
-			sys.exit("Unable to replace chromosome value in file '"+chr_table_file+" : {0}".format(exc))
+				in_file.close()
+				out_file.close()
+				os.rename(file_out,file_to_treat)
+			except IOError as exc:
+				sys.exit("Unable to replace chromosome value in file '"+chr_table_file+" : {0}".format(exc))
 		out_log.write("STATUS OK\n")
 	except IOError as exc:
 		sys.exit("Unable to write to log file '"+log_file+" : {0}".format(exc))

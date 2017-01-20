@@ -1,23 +1,20 @@
 #
-#----------------------------------------------------------------
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
+# Copyright (C) 2016 INRA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-#----------------------------------------------------------------
+#----------------------------------------------------------------------
 #authors :
 #---------
 #	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
@@ -410,7 +407,13 @@ if (!is.null(selResults)) {#There are some results
 	#Histogramme des pValues brutes
 	rawp=as.numeric(as.character(mkDiff2[,"pvalue"]))
 	hist(rawp,xlab="Raw pValue",main="Histogram of raw pValues",nclass=100)
-	hist(rawp[rawp<0.01],xlab="Raw pValue",main="Histogram of raw pValues\n(Zoom on pvalue<1%)",nclass=100)
+	if (sum(rawp<0.01)>100) {
+		hist(rawp[rawp<0.01],xlab="Raw pValue",main="Histogram of raw pValues\n(Zoom on pvalue<1%)",nclass=100)
+	} else {
+		if (sum(rawp<0.05)>100) {
+			hist(rawp[rawp<0.05],xlab="Raw pValue",main="Histogram of raw pValues\n(Zoom on pvalue<5%)",nclass=100)
+		}
+	}
 
 	#Histogramme des differences de méylation pour les réltats jugéignificatifs
 	hTrue=hist(as.numeric(as.character(selResults[,"Methyl diff"])),nclass=100,plot=F)
@@ -457,6 +460,7 @@ if (!is.null(selResults)) {#There are some results
 	dev.off()
 
 	#Output for stat_threshold1
+	selResults=selectSignificative(stat_threshold1,methdiff_threshold)
 	selResults=selResults[,-grep("Position",colnames(selResults))]
 	selResults[,ncol(selResults)]=-as.numeric(as.character(selResults[,ncol(selResults)]))
 
@@ -468,7 +472,7 @@ if (!is.null(selResults)) {#There are some results
 	output.file=paste(output_dir,"/MethylKit - ",title," - ",stat_value,stat_threshold1,sep="")
 	write.table(file=paste(output.file,".txt",sep=""),selResults,sep="\t",row.names=F,quote=F)
 
-	#Output for stat_threshold1 : needed to extend DMRs
+	#Output for stat_threshold2 : needed to extend DMRs
 	selResults=selectSignificative(stat_threshold2,methdiff_threshold)
 	selResults=selResults[,-grep("Position",colnames(selResults))]
 	selResults[,ncol(selResults)]=-as.numeric(as.character(selResults[,ncol(selResults)]))

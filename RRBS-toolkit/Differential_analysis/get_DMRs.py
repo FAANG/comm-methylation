@@ -1,23 +1,20 @@
 #
-#----------------------------------------------------------------
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
+# Copyright (C) 2016 INRA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-#----------------------------------------------------------------
+#----------------------------------------------------------------------
 #authors :
 #---------
 #	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
@@ -307,6 +304,7 @@ except IOError as exc:
 if from_merge_step :
 	#Try to extend DMRs with DMCs which have a pvalue <stat2Threshold
 	file_stat=step2file["get_diff_methyl.R"];
+
 	txt_out=txt_out.replace("DMRs.txt","DMRs extended.txt")
 	txt_out=txt_out.replace(stat_value+str(stat_threshold1),stat_value+str(stat_threshold2))
 	bed_out=txt_out.replace(".txt",".bed")
@@ -339,8 +337,14 @@ if from_merge_step :
 		sys.exit("Cannot read file resulting from statistical analysis '{0}' : {1}".format(stat_file,exc))
 
 	new_DMRs={}
-	for chr in DMRs :
-		DMCs=sorted(stat_DMCs[chr].keys())
+	for chr in sorted(DMRs.keys()) :
+
+		if chr in stat_DMCs :
+			DMCs=sorted(stat_DMCs[chr].keys())
+		else :
+			#No DMC between stat1 and stat2 thresholds in this chromosome
+			DMCs=[]
+
 		extended_DMRs={}
 		for island_start in sorted(DMRs[chr]) :
 			(island_end,fc_DMR)=DMRs[chr][island_start].split("\t")
@@ -349,33 +353,37 @@ if from_merge_step :
 			new_end=island_end
 			if debug :
 				print "Treating DMR ["+str(island_start)+";"+str(island_end)+"] ("+fc_DMR+")"
-			#Try to extend DMR on the right
-			for idx in range(0,len(DMCs)):
-				if DMCs[idx]>island_end :
-					break
-			extended_right=False
-			while idx<len(DMCs) and DMCs[idx]>island_end and DMCs[idx]-island_end<max_distance_between_DMCs and stat_DMCs[chr][DMCs[idx]] == fc_DMR :
-				extended_right=True
-				if debug :
-					print "\tDMR["+str(island_start)+";"+str(island_end)+"] extended on the right to "+str(DMCs[idx])+" (dist="+str(DMCs[idx]-island_end)+")"
-				composition_of_DMRs[chr][island_start].append(str(DMCs[idx]))
-				idx+=1
-			if extended_right:
-				new_end=DMCs[idx-1]
 
-			#Try to extend DMR on the left
-			for idx in range(len(DMCs)-1,-1,-1):
-				if DMCs[idx]<island_start :
-					break
 			extended_left=False
-			while idx>=0 and DMCs[idx]<island_start and island_start-DMCs[idx]<max_distance_between_DMCs and stat_DMCs[chr][DMCs[idx]] == fc_DMR :
-				extended_left=True
-				if debug :
-					print "\tDMR["+str(island_start)+";"+str(island_end)+"] extended on the left to "+str(DMCs[idx])+" (dit="+str(island_start-DMCs[idx])+")"
-				composition_of_DMRs[chr][island_start].insert(0,str(DMCs[idx]))
-				idx-=1
-			if extended_left:
-				new_start=DMCs[idx+1]
+			extended_right=False
+			if len(DMCs)!=0 :
+				#Try to extend DMR on the right
+				for idx in range(0,len(DMCs)):
+					if DMCs[idx]>island_end :
+						break
+				extended_right=False
+				while idx<len(DMCs) and DMCs[idx]>island_end and DMCs[idx]-island_end<max_distance_between_DMCs and stat_DMCs[chr][DMCs[idx]] == fc_DMR :
+					extended_right=True
+					if debug :
+						print "\tDMR["+str(island_start)+";"+str(island_end)+"] extended on the right to "+str(DMCs[idx])+" (dist="+str(DMCs[idx]-island_end)+")"
+					composition_of_DMRs[chr][island_start].append(str(DMCs[idx]))
+					idx+=1
+				if extended_right:
+					new_end=DMCs[idx-1]
+	
+				#Try to extend DMR on the left
+				for idx in range(len(DMCs)-1,-1,-1):
+					if DMCs[idx]<island_start :
+						break
+				extended_left=False
+				while idx>=0 and DMCs[idx]<island_start and island_start-DMCs[idx]<max_distance_between_DMCs and stat_DMCs[chr][DMCs[idx]] == fc_DMR :
+					extended_left=True
+					if debug :
+						print "\tDMR["+str(island_start)+";"+str(island_end)+"] extended on the left to "+str(DMCs[idx])+" (dit="+str(island_start-DMCs[idx])+")"
+					composition_of_DMRs[chr][island_start].insert(0,str(DMCs[idx]))
+					idx-=1
+				if extended_left:
+					new_start=DMCs[idx+1]
 
 			if extended_left or extended_right :
 				if debug:
@@ -434,7 +442,7 @@ if from_merge_step :
 		nb_hypo=nb_hyper=0
 		nb_DMRs=0
 		out_txt.write("Chromosome\tDMR start\tDMR end\tDMR length\tMethylation state for "+reference_cond+"\tList of DMCs\tNumber of DMCs\n")
-		for chr in new_DMRs :
+		for chr in sorted(new_DMRs.keys()) :
 			for island_start in sorted(new_DMRs[chr]) :
 				nb_DMRs+=1
 				(island_end,fc_DMR)=new_DMRs[chr][island_start].split("\t")
@@ -455,7 +463,7 @@ if from_merge_step :
 					id_DMR="hyper_"+str(nb_hyper)
 					score=1
 
-				out_bed.write(	chr+"\t"+str(island_start)+"\t"+str(last_start)+"\t"+id_DMR+"\t"+str(score)+"\n")
+				out_bed.write(	chr+"\t"+str(island_start)+"\t"+str(island_end)+"\t"+id_DMR+"\t"+str(score)+"\n")
 			
 		out_txt.close()
 		out_bed.close()	

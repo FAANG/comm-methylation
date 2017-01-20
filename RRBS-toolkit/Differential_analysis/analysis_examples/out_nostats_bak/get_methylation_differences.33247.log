@@ -1,0 +1,21 @@
+CMD get_obvious_DMC.py
+	Configuration file :
+	--------------------
+		min_coverage2=10
+		max_coverage2=500
+		methdiff_threshold2=100.0
+	Reading A1 ...
+	Reading B1 ...
+RESULT number of obvious DMCs=775
+OUT ./out_nostats/obvious_DMCs_Condition A vs B_mincov10_maxcov500_threshold100.0.txt
+STATUS OK
+CMD get_DMRs.py
+	Configuration file :
+	--------------------
+		min_DMCs=3
+		max_distance=100
+		stat_threshold2=0.05
+		output_dir=./out_nostats
+RESULT Number of DMRs identified=94
+RESULT Number of extended DMRs identified=94
+STATUS OK
