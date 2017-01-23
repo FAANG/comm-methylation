@@ -11,4 +11,6 @@ It has been developped in Python 3 and integrate Trim galore, FastQC, Bismark, S
 Contact : celine.noirot@inra.fr
 
 
-* **BSseeker2_RRBS_WGBS_alignment_and_calling** : __to be completed__
+* **BSseeker2_RRBS_WGBS_alignment_and_calling** : This pipeline provides a set of scripts designed to provide DNA methylation calls from raw reads produced using Whole Genome Bisulfite Sequencing (WGBS) or Reduced Representation Bisulfite Sequencing (RRBS). The resulting methylation levels can be utilized for differential methylation analysis using MethylKit or other differential methylation tools. 
+These scripts were developped for use with Trim galore! and BSseeker2 using Bowtie2. 
+Contact : kschach2@illinois.edu
