@@ -10,6 +10,8 @@
 #produce_hclust	Yes
 #produce_pca	Yes
 #pca_scaling	Yes
+#with_sample_labels	Yes
+#keep_NA	Yes
 #sampling_factor	0.9
 Sample	File	Condition	Colour
 A1	../Differential_analysis/analysis_examples/data/A1_syntheseCpG_chr1.txt	Condition_A	blue

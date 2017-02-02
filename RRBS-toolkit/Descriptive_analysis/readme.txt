@@ -15,10 +15,12 @@ Configuration file structure (example in descriptive_analysis_config.txt)
 #min_samples_per_condition	2
 #min_coverage	10
 #max_coverage	500
+#keep_NA	Yes
 #output_table_file	aggregated_methylation_results.txt
 #produce_hclust	Yes
 #produce_pca	Yes
 #pca_scaling	Yes
+#with_sample_labels	Yes
 #sampling_factor	0.9
 Sample	File	Tissue	Colour
 M1	../Differential_analysis/analysis_examples/data/MONO_1103_CPG10-500_syntheseCpG_chr1.txt	Monocyte	brown
@@ -45,6 +47,7 @@ min_coverage and max_coverage	Minimal and maximal number of reads per CpG requir
 				(Default value : 10 for min and 500 for max)
 min_samples_per_condition	Minimal number of samples per group satisfying above coverage conditions.
 				(Default value : no minimum)
+keep_NA				Whether to keep rows containing at least one NA value (Possible values : Yes/No - Default : Yes)
 output_table_file		Name of the file used to save methylation level table.
 				If no path is specified, file will be produced into directory specified in output_dir
 produce_hclust			Flag used to indicate if user wants to produce hierarchical clustering.
@@ -53,6 +56,8 @@ produce_pca			Flag used to indicate if user wants to produce principal component
 				(Possible values : Yes/No - Default : Yes)
 pca_scaling			Flag indicating if data should be scaled to unit variance before computation of PCA.
 				See FactoMineR documentation.
+				(Possible values : Yes/No - Default : Yes)
+with_sample_labels		Flag indicating if sample labels should be displayed on PCA axes projection
 				(Possible values : Yes/No - Default : Yes)
 sampling_factor			Proportion of the # of CpG satifying above conditions used to compute analysis
 				This parameter is used to reduce execution time of the principal component analysis

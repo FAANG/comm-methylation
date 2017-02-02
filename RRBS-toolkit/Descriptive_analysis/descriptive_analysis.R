@@ -90,6 +90,20 @@ if (length(idx)==1) {
 } else {
 	min_samples_per_condition=-1
 }
+#------- keep_NA ----------------
+idx=grep("^#keep_NA",lines)
+if (length(idx)==1) {
+	keep_NA=gsub("^#keep_NA\t","",lines[idx])
+	keep_NA=toupper(keep_NA)
+	if (keep_NA=="NO") {
+		keep_NA=FALSE
+	} else {
+		keep_NA=TRUE
+	}
+} else {
+	keep_NA=TRUE
+}
+cat("\t\tkeep_NA=",keep_NA,"\n",file=logFile,append=T,sep="")
 #------- sampling_factor ----------------
 idx=grep("^#sampling_factor",lines)
 if (length(idx)==1) {
@@ -160,6 +174,21 @@ if (length(idx)==1) {
 	pca_scaling=TRUE
 }
 cat("\t\tpca_scaling=",pca_scaling,"\n",file=logFile,append=T,sep="")
+#------- with_sample_labels ----------------
+idx=grep("^#with_sample_labels",lines)
+if (length(idx)==1) {
+	pca_with_labels=gsub("^#with_sample_labels\t","",lines[idx])
+	pca_with_labels=toupper(pca_with_labels)
+	if (pca_with_labels=="NO") {
+		pca_labels="none"
+	} else {
+		pca_labels=c("ind","quali.sup")
+	}
+} else {
+	pca_with_labels="Yes"
+	pca_labels=c("ind","quali.sup")
+}
+cat("\t\twith_sample_labels=",pca_with_labels,"\n",file=logFile,append=T,sep="")
 
 
 bismarks=list()
@@ -203,12 +232,6 @@ kept=names(t)[t==length(treatments)]
 cat("Kept ",length(kept)," CpG for all conditions ...\n",file=logFile,append=T,sep="")
 cat("Kept ",length(kept)," CpG for all conditions ...\n",sep="")
 
-if (sampling_factor<1) {
-	kept=sample(kept,round(length(kept)*sampling_factor))
-	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",file=logFile,append=T,sep="")
-	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",sep="")
-}
-
 cat("Creating final table ...\n",file=logFile,append=T,sep="")
 cat("Creating final table ...\n",sep="")
 kept=data_frame("Position"=kept)
@@ -224,6 +247,20 @@ for (ttt in treatments) {
 }
 tab=select(kept,-Position)
 
+if (!keep_NA) {
+	cat("Filtering CpG with NA ...\n",file=logFile,append=T,sep="")
+	cat("Filtering CpG with NA ...\n",sep="")
+	tab=na.omit(tab)
+	cat("Kept ",nrow(tab)," CpG after NA filtering ...\n",file=logFile,append=T,sep="")
+	cat("Kept ",nrow(tab)," CpG after NA filtering ...\n",sep="")
+}
+
+if (sampling_factor<1) {
+	kept=sample(1:nrow(tab),round(nrow(tab)*sampling_factor))
+	tab=tab[kept,]
+	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",file=logFile,append=T,sep="")
+	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",sep="")
+}
 #Imputation d'une valeur moyenne par condition pour les valeurs manquantes
 #for (ttt in treatments) {
 #	samplesInCond=samples[treatment==ttt]
@@ -243,7 +280,9 @@ tab=select(kept,-Position)
 #DEBUG
 #tab=tab[1:10000,]
 if (output_tab_file != "") {
-	write.table(file=output_tab_file,kept,row.names=F,sep="\t",quote=F)
+	tmp_tab=cbind(rownames(tab),tab)
+	colnames(tmp_tab)[1]="Position"
+	write.table(file=output_tab_file,tmp_tab,row.names=F,sep="\t",quote=F)
 }
 
 if (!do_pca & !do_hclust) {
@@ -339,7 +378,7 @@ for (i in 1:(nbAxes-1)) {
 	bb=coord.ellipse(aa,bary=TRUE,axes=c(i,j))
 	plot.PCA(RESt,
 		axes=c(i, j),
-		label=c("ind","quali.sup"),
+		label=pca_labels,
 		habillage=hab,col.hab=qualiColors,
 		title=paste("PCA on ",title," - Axis #",i," & #",j,sep=""),
 		ellipse=bb,new.plot=FALSE
