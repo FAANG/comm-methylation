@@ -1,23 +1,20 @@
 #
-#----------------------------------------------------------------
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
+# Copyright (C) 2016 INRA
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-#
-#----------------------------------------------------------------
+#----------------------------------------------------------------------
 #authors :
 #---------
 #	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
@@ -235,17 +232,22 @@ cat("Kept ",length(kept)," CpG for all conditions ...\n",sep="")
 cat("Creating final table ...\n",file=logFile,append=T,sep="")
 cat("Creating final table ...\n",sep="")
 kept=data_frame("Position"=kept)
-for (ttt in treatments) {
-	samplesInCond=samples[treatment==ttt]
-	for (sample in samplesInCond) {
+#for (ttt in treatments) {
+#	samplesInCond=samples[treatment==ttt]
+#	for (sample in samplesInCond) {
+	for (sample in samples) {
 		cat("\tTreating lines for sample ",sample," ...\n",file=logFile,append=T,sep="")
 		cat("\tTreating lines for sample ",sample," ...\n",sep="")
 		bismark=as_data_frame(bismarks[[sample]])
 		kept=select(left_join(kept,select(bismark,Position,pct_methylated),by=c("Position")),everything())
 		colnames(kept)[ncol(kept)]=sample
 	}
-}
-tab=select(kept,-Position)
+#}
+rn=kept[,"Position"]
+rn=as.matrix(rn)
+rn=rn[,1]
+tab=as.matrix(select(kept,-Position))
+rownames(tab)=rn
 
 if (!keep_NA) {
 	cat("Filtering CpG with NA ...\n",file=logFile,append=T,sep="")
@@ -255,12 +257,6 @@ if (!keep_NA) {
 	cat("Kept ",nrow(tab)," CpG after NA filtering ...\n",sep="")
 }
 
-if (sampling_factor<1) {
-	kept=sample(1:nrow(tab),round(nrow(tab)*sampling_factor))
-	tab=tab[kept,]
-	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",file=logFile,append=T,sep="")
-	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",sep="")
-}
 #Imputation d'une valeur moyenne par condition pour les valeurs manquantes
 #for (ttt in treatments) {
 #	samplesInCond=samples[treatment==ttt]
@@ -283,6 +279,13 @@ if (output_tab_file != "") {
 	tmp_tab=cbind(rownames(tab),tab)
 	colnames(tmp_tab)[1]="Position"
 	write.table(file=output_tab_file,tmp_tab,row.names=F,sep="\t",quote=F)
+}
+
+if (sampling_factor<1) {
+	kept=sample(1:nrow(tab),round(nrow(tab)*sampling_factor))
+	tab=tab[kept,]
+	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",file=logFile,append=T,sep="")
+	cat("Kept ",length(kept)," CpG after sampling  (sampling factor=",sampling_factor,") ...\n",sep="")
 }
 
 if (!do_pca & !do_hclust) {
@@ -344,7 +347,7 @@ colnames(Mt)[ncol(Mt)]="Groups"
 posQualif=nbGenes+1
 
 qualiColors=c()
-for (c in colors) {
+for (c in colors[order(treatment)]) {
 	if (c %in% qualiColors) {
 		next
 	}
@@ -375,6 +378,10 @@ for (i in 1:(nbAxes-1)) {
 	j=i+1
 	hab=posQualif+idx
 	aa=cbind.data.frame(as.character(Mt[,hab]),RESt$ind$coord)
+	################## rajout 17/03 suite a erreur ellipse  having only one sample of a group
+	aa<-aa[duplicated(aa[1]) | duplicated(aa[1], fromLast=TRUE),] # Remove all unique values - there are there only once and cause troubles.
+	aa[1] <- factor(aa[[1]]) # Re-level the  "description" column
+	#######################
 	bb=coord.ellipse(aa,bary=TRUE,axes=c(i,j))
 	plot.PCA(RESt,
 		axes=c(i, j),
