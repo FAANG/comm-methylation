@@ -33,18 +33,21 @@
 RRBS_HOME=/save/bdr-er5/RRBS-toolkit
 
 #path to the directory where bismark is installed
-BISMARK_HOME=/usr/local/bioinfo/src/Bismark/current
+BISMARK_HOME=/usr/local/bioinfo/src/Bismark/bismark_v0.14.3
 
 #path to the directory where bowtie (v1) is installed
-BOWTIE_HOME=/usr/local/bioinfo/src/bowtie/current
+BOWTIE_HOME=/usr/local/bioinfo/src/bowtie/bowtie-0.12.9
 
 #path to the trim_galore executable file
 TRIMGALORE_EXECUTE=/usr/local/bioinfo/bin/trim_galore
+#path to the cut_adapt executable file
+CUTADAPT_EXECUTE=/usr/local/bioinfo/src/cutadapt/cutadapt-1.7.1/cutadapt
 #path to the samtools executable file
-SAMTOOLS_EXECUTE=/usr/local/bioinfo/bin/samtools
+SAMTOOLS_EXECUTE=/usr/local/bioinfo/src/samtools/samtools-1.1/samtools
 #path to the python (v2.7) executable file
 PYTHON_EXECUTE=/usr/local/bioinfo/src/python/Python-2.7.2/bin/python
 #path to the R executable file
 R_EXECUTE=/usr/local/bioinfo/bin/R
 
-export RRBS_HOME BISMARK_PIPELINE_HOME BISMARK_HOME BOWTIE_HOME TRIMGALORE_EXECUTE SAMTOOLS_EXECUTE PYTHON_EXECUTE R_EXECUTE
+export RRBS_HOME BISMARK_PIPELINE_HOME BISMARK_HOME BOWTIE_HOME TRIMGALORE_EXECUTE CUTADAPT_EXECUTE SAMTOOLS_EXECUTE PYTHON_EXECUTE R_EXECUTE
+
