@@ -68,14 +68,14 @@ if [ "$file_R2" != "" ]
 	then
 		echo "Launching trim_galore on $file_R1 and $file_R2 files ..."
 		$TRIMGALORE_EXECUTE \
-	--fastqc --paired --rrbs --non_directional --trim1 \
+	--path_to_cutadapt $CUTADAPT_EXECUTE --fastqc --paired --rrbs --non_directional --trim1 \
 	"$file_R1" "$file_R2" \
 	--output_dir $work_dir
 
 else
 		echo "Launching trim_galore on "$file_R1" file ..."
 	$TRIMGALORE_EXECUTE \
-	--fastqc --rrbs --non_directional --trim1 \
+	--path_to_cutadapt $CUTADAPT_EXECUTE --fastqc --rrbs --non_directional --trim1 \
 	"$file_R1" \
 	--output_dir $work_dir
 
