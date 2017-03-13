@@ -39,15 +39,18 @@ BISMARK_HOME=/usr/local/bioinfo/src/Bismark/bismark_v0.14.3
 BOWTIE_HOME=/usr/local/bioinfo/src/bowtie/bowtie-0.12.9
 
 #path to the trim_galore executable file
-TRIMGALORE_EXECUTE=/usr/local/bioinfo/bin/trim_galore
+TRIMGALORE_EXECUTE=/usr/local/bioinfo/src/Trim_Galore/trim_galore_v0.4.0/trim_galore
+
 #path to the cut_adapt executable file
-CUTADAPT_EXECUTE=/usr/local/bioinfo/src/cutadapt/cutadapt-1.7.1/cutadapt
+CUTADAPT_EXECUTE=/usr/local/bioinfo/src/cutadapt/cutadapt-1.7.1/bin/cutadapt
+
 #path to the samtools executable file
 SAMTOOLS_EXECUTE=/usr/local/bioinfo/src/samtools/samtools-1.1/samtools
+
 #path to the python (v2.7) executable file
 PYTHON_EXECUTE=/usr/local/bioinfo/src/python/Python-2.7.2/bin/python
+
 #path to the R executable file
 R_EXECUTE=/usr/local/bioinfo/bin/R
 
 export RRBS_HOME BISMARK_PIPELINE_HOME BISMARK_HOME BOWTIE_HOME TRIMGALORE_EXECUTE CUTADAPT_EXECUTE SAMTOOLS_EXECUTE PYTHON_EXECUTE R_EXECUTE
-
