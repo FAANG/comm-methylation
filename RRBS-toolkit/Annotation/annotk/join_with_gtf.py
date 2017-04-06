@@ -28,6 +28,7 @@
 #	Kiefer Helene (helene.kiefer@inra.fr)		software user and data analysis (principal invertigator in Epigenetics)
 #
 
+
 import os
 import sys
 from sys import argv
@@ -396,12 +397,18 @@ class Join_with_gtf :
 					else :
 						me=re.match("^(.*):([0-9]+)-([0-9]+)$",localisation)
 						if me is None :
-							sys.exit("Could not interpret localisation '{0}' on line #{1} f target file {2}. Exiting.".format( \
-								elmts[target_keys[0]-1],no_line,file_in) \
-							)
-						target_chr=me.group(1)
-						target_start=int(me.group(2))
-						target_end=int(me.group(3))
+							me=re.match("^(.*):([0-9]+)$",localisation)
+							if me is None :
+								sys.exit("Could not interpret localisation '{0}' on line #{1} f target file {2}. Exiting.".format( \
+									elmts[target_keys[0]-1],no_line,file_in) \
+								)
+							target_chr=me.group(1)
+							target_start=int(me.group(2))
+							target_end=target_start
+						else :
+							target_chr=me.group(1)
+							target_start=int(me.group(2))
+							target_end=int(me.group(3))
 				else :
 					target_chr = elmts[target_keys[0]-1]
 			

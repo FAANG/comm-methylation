@@ -52,8 +52,8 @@ class Annotation_theme :
 	default_values["nb_max_results"]=-1 # keep all results by default
 	#---------------------------------------
 	#default values for gene feature annotation
-	default_values["promoter_downstream"]=2000
-	default_values["promoter_upstream"]=100
+	default_values["promoter_downstream"]=100
+	default_values["promoter_upstream"]=2000
 	default_values["tss_downstream"]=100
 	default_values["tss_upstream"]=100
 	default_values["tts_downstream"]=100

@@ -137,12 +137,18 @@ class Join_by_location :
 				#Region should be specified as chr:start-end
 				me=re.match("^(.*):([0-9]+)-([0-9]+)$",elmts[reference_keys[0]-1])
 				if me is None :
-					sys.exit("Could not interpret localisation '{0}' on line #{1} of reference file {2}. Exiting.".format( \
-						elmts[reference_keys[0]-1],no_line,file_in) \
-					)
-				chr_region=me.group(1)
-				start_region=int(me.group(2))
-				end_region=int(me.group(3))
+					me=re.match("^(.*):([0-9]+)$",elmts[reference_keys[0]-1])
+					if me is None :
+						sys.exit("Could not interpret localisation '{0}' on line #{1} of reference file {2}. Exiting.".format( \
+							elmts[reference_keys[0]-1],no_line,file_in) \
+						)
+					chr_region=me.group(1)
+					start_region=int(me.group(2))
+					end_region=start_region
+				else :
+					chr_region=me.group(1)
+					start_region=int(me.group(2))
+					end_region=int(me.group(3))
 			elif len(reference_keys) >=2 :
 		        	chr_region = elmts[reference_keys[0]-1]
 		
@@ -296,12 +302,21 @@ class Join_by_location :
 					else :
 						me=re.match("^(.*):([0-9]+)-([0-9]+)$",localisation)
 						if me is None :
-							sys.exit("Could not interpret localisation '{0}' on line #{1} f target file {2}. Exiting.".format( \
-								elmts[target_keys[0]-1],no_line,file_in) \
-							)
-						target_chr=me.group(1)
-						target_start=int(me.group(2))
-						target_end=int(me.group(3))
+							me=re.match("^(.*):([0-9]+)$",localisation)
+							if me is None :
+								sys.exit("Could not interpret localisation '{0}' on line #{1} f target file {2}. Exiting.".format( \
+									elmts[target_keys[0]-1],no_line,file_in) \
+								)
+							target_chr=me.group(1)
+							target_start=int(me.group(2))
+							target_end=target_start
+						else :
+							target_chr=me.group(1)
+							target_start=int(me.group(2))
+							target_end=int(me.group(3))
+
+
+
 				else :
 					target_chr = elmts[target_keys[0]-1]
 			
