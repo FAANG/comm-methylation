@@ -1,20 +1,23 @@
 #
-# Copyright (C) 2016 INRA
-# 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#----------------------------------------------------------------
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
 #
-#----------------------------------------------------------------------
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
+#----------------------------------------------------------------
 #authors :
 #---------
 #	Piumi Francois (francois.piumi@inra.fr)		software conception and development (engineer in bioinformatics)
@@ -24,6 +27,7 @@
 #	Al Adhami Hala (hala_adhami@hotmail.com)	software user and data analysis (postdoctoral researcher in Epigenetics)
 #	Jammes Helene (helene.jammes@inra.fr)		software user and data analysis (research group leader in Epigenetics)
 #	Kiefer Helene (helene.kiefer@inra.fr)		software user and data analysis (principal invertigator in Epigenetics)
+#
 #
 
 import os
@@ -99,7 +103,7 @@ try :
 			continue
 		me=re.match("^#max_distance_between_DMCs\t([^#]*)(#.*)?$",line)
 		if me is not None:
-			max_distance_between_DMCs=int(me.group(1))
+			max_distance_between_DMCs=int(float(me.group(1)))
 			continue
 		me=re.match("^#stat_value\t([^#]*)(#.*)?$",line)
 		if me is not None:
@@ -187,7 +191,7 @@ try:
 		line=line.rstrip("\n")
 		elmts=line.split("\t")
 		chr=elmts[0]
-		start=int(elmts[1])
+		start=int(float(elmts[1]))
 		fc=elmts[-1]
 		if chr not in DMCs:
 			DMCs[chr]={}
@@ -320,7 +324,7 @@ if from_merge_step :
 			line=line.rstrip("\n")
 			elmts=line.split("\t")
 			chr=elmts[0]
-			start=int(elmts[1])
+			start=int(float(elmts[1]))
 			pv=float(elmts[-3])
 			if pv<stat_threshold1 :
 				continue
@@ -348,7 +352,7 @@ if from_merge_step :
 		extended_DMRs={}
 		for island_start in sorted(DMRs[chr]) :
 			(island_end,fc_DMR)=DMRs[chr][island_start].split("\t")
-			island_end=int(island_end)
+			island_end=int(float(island_end))
 			new_start=island_start
 			new_end=island_end
 			if debug :
@@ -408,7 +412,7 @@ if from_merge_step :
 				skip_next=False
 				island_start=starts[idx]
 				(island_end,fc_DMR)=extended_DMRs[island_start].split("\t")
-				island_end=int(island_end)
+				island_end=int(float(island_end))
 
 				next_start=starts[idx+1]
 				(next_end,next_fc)=extended_DMRs[next_start].split("\t")
@@ -446,7 +450,7 @@ if from_merge_step :
 			for island_start in sorted(new_DMRs[chr]) :
 				nb_DMRs+=1
 				(island_end,fc_DMR)=new_DMRs[chr][island_start].split("\t")
-				island_end=int(island_end)
+				island_end=int(float(island_end))
 
 				#Unify and sort list of CpGs
 				list_DMCs=list(sorted(set(composition_of_DMRs[chr][island_start])))

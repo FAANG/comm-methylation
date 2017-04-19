@@ -142,7 +142,7 @@ try :
 					continue
 				elmts=line.split("\t")
 				id=elmts[0]+"."+elmts[1]
-				coverage=int(elmts[2])
+				coverage=int(float(elmts[2]))
 				if coverage<min_coverage or (max_coverage!=-1 and coverage>max_coverage) :
 					continue
 
@@ -215,7 +215,7 @@ try :
 		if me is None:
 			sys.exit("Cannot interpret CpG position '"+id+"'. Exiting.")
 		chr=me.group(1)
-		start=int(me.group(2))
+		start=int(float(me.group(2)))
 		smp=samples[0]
 		if chr not in final:
 			final[chr]={}
@@ -272,4 +272,3 @@ try :
 
 except IOError as exc:
 	sys.exit("Cannot append to log file '{0}' : {1}".format(log_file,exc))
-
