@@ -80,7 +80,7 @@ Suppose we have the following coverage :
 	M1	M2	F1	F2
 CpG1	10	12	13	10
 CpG2	10	9	13	10
-CpG3	10	501	13	10
+CpG3	10	506	13	10
 CpG4	10	9	13	9
 
 Only CpG1 will be considered for the analysis. For the other CpGs, there is at least one sample not satisfying coverage threshold and
